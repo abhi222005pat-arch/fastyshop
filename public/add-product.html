@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Add Product — Fasty Shop Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --g:#3a7d2c;--gl:#5aab47;--gbg:#d6eacc;--gp:#eef6e8;
+      --or:#e07b1a;--ol:#f59e2a;--br:#2e1a0e;
+      --tx:#1a1a1a;--mu:#6b6b6b;--bd:#d4e8c8;
+      --sf:#fff;--bg:#f0f7eb;--er:#e63946;--ok:#22c55e;
+      --fh:'Nunito',sans-serif;--fb:'Poppins',sans-serif;
+      --sh:0 4px 20px rgba(58,125,44,.09);--r:12px;
+    }
+    body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:14px;line-height:1.6;min-height:100vh}
+
+    /* TOPBAR */
+    .tb{background:var(--sf);border-bottom:2px solid var(--gbg);padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(58,125,44,.08)}
+    .logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+    .li{width:34px;height:34px;background:linear-gradient(135deg,var(--or),var(--ol));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+    .ln{font-family:var(--fh);font-size:.95rem;font-weight:900;color:var(--br);display:block}
+    .ls{font-size:9px;font-weight:700;color:var(--or);letter-spacing:2px;text-transform:uppercase;display:block}
+    .tl{display:flex;gap:6px;align-items:center}
+    .tk{border:1.5px solid var(--bd);color:var(--mu);font-size:12px;font-family:var(--fb);padding:5px 12px;border-radius:7px;cursor:pointer;text-decoration:none;background:none;transition:all .2s;white-space:nowrap}
+    .tk:hover{border-color:var(--g);color:var(--g)} .tk.act{background:var(--g);color:#fff;border-color:var(--g)}
+    .ab{background:var(--gp);color:var(--g);font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;border:1.5px solid var(--gbg)}
+
+    /* LAYOUT */
+    .lay{display:grid;grid-template-columns:190px 1fr;min-height:calc(100vh - 58px)}
+    .sb{background:var(--sf);border-right:1.5px solid var(--bd);padding:1.1rem .85rem;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+    .ni{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--mu);text-decoration:none;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+    .ni:hover{background:var(--gp);color:var(--g)} .ni.act{background:var(--g);color:#fff;font-weight:700}
+    .sb-sep{border:none;border-top:1px solid var(--bd);margin:6px 0}
+
+    /* MAIN */
+    .mn{padding:1.75rem;max-width:1200px}
+
+    /* PAGE HEAD */
+    .ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem}
+    .pt{font-family:var(--fh);font-size:1.4rem;font-weight:900;color:var(--br)}
+    .ps{color:var(--mu);font-size:12.5px;margin-top:2px}
+    .hacts{display:flex;gap:.6rem}
+
+    /* BUTTONS */
+    .btn-prim{background:linear-gradient(135deg,var(--g),var(--gl));color:#fff;font-family:var(--fh);font-weight:800;font-size:13.5px;border:none;padding:9px 22px;border-radius:9px;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(58,125,44,.2)}
+    .btn-prim:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(58,125,44,.3)}
+    .btn-prim:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .btn-sec{background:none;border:1.5px solid var(--bd);color:var(--mu);font-family:var(--fb);font-size:13px;padding:8px 18px;border-radius:9px;cursor:pointer;transition:all .2s}
+    .btn-sec:hover{border-color:var(--er);color:var(--er)}
+    .btn-or{background:linear-gradient(135deg,var(--or),var(--ol));color:#fff;font-family:var(--fh);font-weight:800;font-size:13px;border:none;padding:8px 20px;border-radius:9px;cursor:pointer;transition:all .2s}
+    .btn-or:hover{transform:translateY(-1px)}
+
+    /* CARDS */
+    .card{background:var(--sf);border:1.5px solid var(--bd);border-radius:14px;padding:1.4rem;box-shadow:var(--sh);margin-bottom:1.1rem}
+    .card-head{display:flex;align-items:center;gap:8px;margin-bottom:1.1rem;padding-bottom:.9rem;border-bottom:1.5px solid var(--gbg)}
+    .card-icon{font-size:1.1rem}
+    .card-head h3{font-family:var(--fh);font-size:.95rem;font-weight:800;color:var(--br)}
+    .req{color:var(--er)}
+
+    /* FORM */
+    .fg{display:flex;flex-direction:column;gap:4px;margin-bottom:.85rem}
+    .fg label{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+    .fi{background:var(--gp);border:1.5px solid var(--bd);color:var(--tx);font-family:var(--fb);font-size:13px;padding:9px 12px;border-radius:9px;outline:none;transition:all .2s;width:100%}
+    .fi:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(58,125,44,.1);background:#fff}
+    .fi.err{border-color:var(--er);background:#fff5f5}
+    select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b6b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+    textarea.fi{resize:vertical;min-height:75px;line-height:1.5}
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+    .fe{font-size:11px;color:var(--er);margin-top:2px;min-height:14px}
+    .fhint{font-size:11.5px;color:var(--mu);margin-top:3px}
+
+    /* IMAGE UPLOAD */
+    .itb{display:flex;gap:5px;margin-bottom:9px}
+    .it{flex:1;background:var(--gp);border:1.5px solid var(--bd);color:var(--mu);font-size:12.5px;font-weight:600;padding:7px;border-radius:7px;cursor:pointer;transition:all .2s}
+    .it.act{background:var(--g);color:#fff;border-color:var(--g)}
+    .dz{border:2.5px dashed var(--gbg);border-radius:10px;padding:1.75rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--gp)}
+    .dz:hover,.dz.over{border-color:var(--g);background:#e4f2dc}
+    .dz-icon{font-size:2.2rem;margin-bottom:6px}
+    .dz-title{font-family:var(--fh);font-size:.95rem;font-weight:700;color:var(--br);margin-bottom:3px}
+    .dz-sub{font-size:11.5px;color:var(--mu)}
+    .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .thumb{width:70px;height:70px;border-radius:8px;overflow:hidden;border:2px solid var(--bd);cursor:pointer;position:relative;transition:all .2s}
+    .thumb:hover{border-color:var(--g);transform:scale(1.05)}
+    .thumb.cover{border-color:var(--or);box-shadow:0 0 0 2px rgba(224,123,26,.3)}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .thumb .tdel{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:16px;height:16px;font-size:9px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1}
+    .thumb:hover .tdel{display:flex}
+    .thumb .tcov{position:absolute;bottom:2px;left:2px;background:var(--or);color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:3px;display:none}
+    .thumb.cover .tcov{display:block}
+    .ur{display:flex;margin-top:3px}
+    .ur .fi{border-radius:9px 0 0 9px;border-right:none}
+    .bload{background:var(--g);color:#fff;border:none;font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:0 9px 9px 0;cursor:pointer;transition:all .2s;white-space:nowrap}
+    .bload:hover{background:var(--gl)}
+    .prv{width:100%;max-height:140px;object-fit:contain;border-radius:8px;margin-top:8px;background:var(--gp);border:1.5px solid var(--bd);display:none}
+
+    /* GRID LAYOUT */
+    .form-layout{display:grid;grid-template-columns:1fr 340px;gap:1.25rem;align-items:start}
+    .form-col{display:flex;flex-direction:column}
+
+    /* LIVE PREVIEW */
+    .preview-card{background:var(--bg);border:1.5px solid var(--bd);border-radius:12px;overflow:hidden;width:100%}
+    .prev-img{aspect-ratio:1;background:var(--gp);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .prev-img img{width:100%;height:100%;object-fit:cover;display:none}
+    .prev-img-ph{font-size:2.5rem;opacity:.3;display:flex;flex-direction:column;align-items:center;gap:4px}
+    .prev-img-ph span{font-size:11px;color:var(--mu)}
+    .prev-body{padding:.9rem}
+    .prev-cat{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+    .prev-name{font-family:var(--fh);font-size:.88rem;font-weight:700;color:var(--br);margin-bottom:4px;line-height:1.3;min-height:2.2em}
+    .prev-stars{font-size:11px;color:var(--or);margin-bottom:5px}
+    .prev-price{font-family:var(--fh);font-size:1rem;font-weight:800;color:var(--g)}
+    .prev-was{font-size:11px;color:var(--mu);text-decoration:line-through;margin-left:5px}
+    .prev-disc{font-size:10px;font-weight:700;color:var(--or);margin-left:4px}
+    .prev-btn{margin-top:.75rem;width:100%;background:var(--gp);border:1.5px solid var(--gbg);color:var(--g);font-size:12px;font-weight:600;padding:7px;border-radius:7px;text-align:center}
+    .sticky-card{position:sticky;top:70px}
+    .sum-row{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--gbg)}
+    .sum-row:last-child{border:none}
+    .sum-row span:first-child{color:var(--mu)}
+    .sum-row span:last-child{font-weight:600;text-align:right;word-break:break-all}
+
+    /* ALERT */
+    .al{display:flex;align-items:flex-start;gap:10px;padding:.9rem 1.1rem;border-radius:10px;margin-bottom:1rem;font-size:13.5px;position:relative}
+    .al.ok{background:#d4edda;border:1.5px solid #b8dfc4;color:#155724}
+    .al.er{background:#f8d7da;border:1.5px solid #f5c2c7;color:#721c24}
+    .al-icon{font-size:1.3rem;flex-shrink:0}
+    .al-close{position:absolute;top:8px;right:10px;background:none;border:none;cursor:pointer;font-size:1rem;opacity:.5}
+    .al-close:hover{opacity:1}
+
+    /* ════════════════════════════════════
+       DELETE PRODUCTS SECTION
+    ════════════════════════════════════ */
+    .section-divider{display:flex;align-items:center;gap:1rem;margin:2rem 0 1.5rem}
+    .section-divider::before,.section-divider::after{content:'';flex:1;border-top:2px solid var(--bd)}
+    .section-divider span{font-family:var(--fh);font-size:1.1rem;font-weight:800;color:var(--br);white-space:nowrap;padding:0 .5rem}
+
+    .del-toolbar{display:flex;gap:.6rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+    .del-search{display:flex;align-items:center;background:var(--sf);border:1.5px solid var(--bd);border-radius:100px;overflow:hidden;flex:1;max-width:320px}
+    .del-search input{background:none;border:none;outline:none;font-family:var(--fb);font-size:13px;padding:7px 14px;width:100%;color:var(--tx)}
+    .del-search input::placeholder{color:var(--mu)}
+    .del-search button{background:var(--g);border:none;color:#fff;padding:7px 13px;cursor:pointer;font-size:13px}
+    .del-sel{background:var(--sf);border:1.5px solid var(--bd);color:var(--tx);font-family:var(--fb);font-size:12.5px;padding:7px 11px;border-radius:8px;cursor:pointer;outline:none}
+
+    .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+    .prod-card{background:var(--sf);border:1.5px solid var(--bd);border-radius:12px;overflow:hidden;box-shadow:var(--sh);transition:all .2s;position:relative}
+    .prod-card:hover{border-color:var(--er);transform:translateY(-2px);box-shadow:0 6px 20px rgba(230,57,70,.12)}
+    .prod-card-img{aspect-ratio:1;background:var(--gp);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+    .prod-card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+    .prod-card:hover .prod-card-img img{transform:scale(1.05)}
+    .prod-card-img .no-img{font-size:2.5rem;opacity:.3}
+    .prod-badge{position:absolute;top:7px;left:7px;font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;text-transform:uppercase}
+    .pb-sale{background:var(--or);color:#fff} .pb-new{background:var(--g);color:#fff} .pb-hot{background:var(--er);color:#fff}
+    .prod-card-body{padding:.85rem}
+    .prod-card-name{font-family:var(--fh);font-size:.82rem;font-weight:700;color:var(--br);margin-bottom:3px;line-height:1.3}
+    .prod-card-cat{font-size:10.5px;color:var(--mu);margin-bottom:6px}
+    .prod-card-price{font-family:var(--fh);font-weight:800;color:var(--g);font-size:.9rem}
+    .prod-card-stock{font-size:11px;color:var(--mu);margin-left:6px}
+    .prod-card-del{width:100%;background:#fce8ea;border:1.5px solid #f5c2c7;color:var(--er);font-family:var(--fh);font-weight:700;font-size:12.5px;padding:7px;border-radius:7px;cursor:pointer;margin-top:.6rem;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+    .prod-card-del:hover{background:var(--er);color:#fff;border-color:var(--er)}
+
+    .del-empty{text-align:center;padding:3rem;color:var(--mu);background:var(--sf);border:1.5px solid var(--bd);border-radius:12px}
+    .del-empty .ei{font-size:2.5rem;margin-bottom:.75rem}
+    .del-loader{display:flex;justify-content:center;padding:3rem}
+    .spin{width:36px;height:36px;border:4px solid var(--gbg);border-top-color:var(--g);border-radius:50%;animation:sp .8s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+
+    /* DELETE CONFIRM MODAL */
+    .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center;padding:1rem}
+    .ov.open{display:flex}
+    .dm{background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:400px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:pi .25s ease}
+    @keyframes pi{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+    .dm-icon{font-size:3rem;margin-bottom:.65rem}
+    .dm-title{font-family:var(--fh);font-size:1.15rem;font-weight:900;color:var(--br);margin-bottom:.4rem}
+    .dm-sub{color:var(--mu);font-size:13px;margin-bottom:1.35rem;line-height:1.5;padding:0 .5rem}
+    .dm-img{width:70px;height:70px;object-fit:cover;border-radius:10px;margin:0 auto .75rem;display:block;border:2px solid var(--bd)}
+    .dm-btns{display:flex;gap:7px;justify-content:center}
+    .btn-cancel{background:none;border:1.5px solid var(--bd);color:var(--mu);font-family:var(--fb);font-size:13px;padding:8px 20px;border-radius:9px;cursor:pointer;transition:all .2s}
+    .btn-cancel:hover{border-color:var(--mu);color:var(--tx)}
+    .btn-del-confirm{background:var(--er);color:#fff;font-family:var(--fh);font-weight:800;font-size:13.5px;border:none;padding:9px 26px;border-radius:9px;cursor:pointer;transition:all .2s}
+    .btn-del-confirm:hover{background:#c62333}
+    .btn-del-confirm:disabled{opacity:.6;cursor:not-allowed}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--g);color:#fff;font-size:13.5px;font-weight:500;padding:11px 20px;border-radius:11px;z-index:500;display:flex;align-items:center;gap:7px;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 4px 20px rgba(58,125,44,.3);max-width:320px}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.error{background:var(--er)} .toast.warn{background:var(--or)}
+
+    @media(max-width:900px){.form-layout{grid-template-columns:1fr}.sticky-card{position:static}.lay{grid-template-columns:1fr}.sb{display:none}.g2{grid-template-columns:1fr}.prod-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="tb">
+  <a href="/" class="logo">
+    <div class="li">🛒</div>
+    <div><span class="ln">FASTY SHOP</span><span class="ls">Admin Panel</span></div>
+  </a>
+  <div class="tl">
+    <span class="ab" id="aName">🔑 Admin</span>
+    <a href="/" class="tk">🌐 Website</a>
+    <a href="/add-product.html" class="tk act">➕ Add Product</a>
+    <a href="/admin-products.html" class="tk">📦 Products</a>
+    <a href="/admin-orders.html" class="tk">📋 Orders</a>
+  </div>
+</header>
+
+<div class="lay">
+  <!-- SIDEBAR -->
+  <aside class="sb">
+    <a href="/" class="ni">🌐 View Website</a>
+    <hr class="sb-sep"/>
+    <a href="/add-product.html"    class="ni act">➕ Add Product</a>
+    <a href="/admin-products.html" class="ni">📦 Manage Products</a>
+    <a href="/admin-orders.html"   class="ni">📋 Orders</a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="mn">
+
+    <!-- ═══════════ ADD PRODUCT SECTION ═══════════ -->
+    <div class="ph">
+      <div>
+        <h1 class="pt">➕ Add New Product</h1>
+        <p class="ps">Fill in the details and upload a product image.</p>
+      </div>
+      <div class="hacts">
+        <button class="btn-sec" onclick="resetForm()">↺ Reset</button>
+        <button class="btn-prim" id="btnSubmit" onclick="submitProduct()">✓ Add Product</button>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div id="alOk" class="al ok" style="display:none">
+      <span class="al-icon">🎉</span>
+      <div><strong>Product added!</strong><p id="alOkMsg" style="font-size:12.5px;margin-top:2px;"></p></div>
+      <button class="al-close" onclick="this.parentElement.style.display='none'">✕</button>
+    </div>
+    <div id="alEr" class="al er" style="display:none">
+      <span class="al-icon">⚠️</span>
+      <div><strong>Failed to add product</strong><p id="alErMsg" style="font-size:12.5px;margin-top:2px;"></p></div>
+      <button class="al-close" onclick="this.parentElement.style.display='none'">✕</button>
+    </div>
+
+    <!-- Form + Preview -->
+    <div class="form-layout">
+
+      <!-- LEFT: form -->
+      <div class="form-col">
+
+        <!-- Image Card -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-icon">🖼️</span>
+            <h3>Product Image <span class="req">*</span></h3>
+          </div>
+          <div class="itb">
+            <button class="it act" id="itUp" onclick="switchTab('upload')">📁 Upload File</button>
+            <button class="it"     id="itUrl" onclick="switchTab('url')">🔗 Image URL</button>
+          </div>
+          <div id="panUp">
+            <div class="dz" id="dz"
+                 ondragover="event.preventDefault();this.classList.add('over')"
+                 ondragleave="this.classList.remove('over')"
+                 ondrop="onDrop(event)"
+                 onclick="document.getElementById('fInput').click()">
+              <div class="dz-icon">📂</div>
+              <div class="dz-title">Click or drag &amp; drop images here</div>
+              <div class="dz-sub">JPG, PNG, WebP · Max 5 MB each · Multiple files supported</div>
+              <input type="file" id="fInput" accept="image/*" multiple style="display:none"
+                     onchange="onFiles(this.files)"/>
+            </div>
+            <div class="thumbs" id="thumbs"></div>
+          </div>
+          <div id="panUrl" style="display:none">
+            <div class="ur">
+              <input type="url" id="imgUrl" class="fi" placeholder="https://example.com/image.jpg"/>
+              <button class="bload" onclick="loadUrl()">Load →</button>
+            </div>
+            <div class="fhint" style="margin-top:5px">Paste a direct image link and click Load</div>
+            <img id="urlPrv" class="prv" src="" alt="preview"
+                 onload="this.style.display='block';urlValid=true;updatePreview()"
+                 onerror="this.style.display='none';urlValid=false"/>
+          </div>
+          <div id="imgErr" style="font-size:11px;color:var(--er);margin-top:6px"></div>
+        </div>
+
+        <!-- Basic Info -->
+        <div class="card">
+          <div class="card-head"><span class="card-icon">📝</span><h3>Basic Information</h3></div>
+          <div class="fg">
+            <label>Product Name <span class="req">*</span></label>
+            <input type="text" id="fName" class="fi" placeholder="e.g. Sony WH-1000XM5 Headphones" maxlength="200" oninput="updatePreview()"/>
+            <div class="fe" id="fe-fName"></div>
+          </div>
+          <div class="fg">
+            <label>Description</label>
+            <textarea id="fDesc" class="fi" rows="3" placeholder="Features, specs, what's in the box..."></textarea>
+          </div>
+          <div class="g2">
+            <div class="fg">
+              <label>Category <span class="req">*</span></label>
+              <select id="fCat" class="fi" onchange="updatePreview()">
+                <option value="">-- Select --</option>
+                <option value="1">📱 Electronics</option><option value="2">👗 Fashion</option>
+                <option value="3">🏠 Home &amp; Living</option><option value="4">🍎 Groceries</option>
+                <option value="5">📚 Books</option><option value="6">🎮 Gaming</option>
+                <option value="7">💄 Beauty</option><option value="8">⚽ Sports</option>
+                <option value="9">🧸 Toys</option><option value="10">🔧 Tools</option>
+              </select>
+              <div class="fe" id="fe-fCat"></div>
+            </div>
+            <div class="fg">
+              <label>Badge</label>
+              <select id="fBadge" class="fi" onchange="updatePreview()">
+                <option value="">None</option>
+                <option value="sale">🏷️ Sale</option>
+                <option value="new">✨ New</option>
+                <option value="hot">🔥 Hot</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="card">
+          <div class="card-head"><span class="card-icon">💰</span><h3>Pricing</h3></div>
+          <div class="g2">
+            <div class="fg">
+              <label>Selling Price (₹) <span class="req">*</span></label>
+              <input type="number" id="fPrice" class="fi" placeholder="4999" min="0" step="0.01" oninput="updatePreview()"/>
+              <div class="fe" id="fe-fPrice"></div>
+            </div>
+            <div class="fg">
+              <label>Original / MRP (₹)</label>
+              <input type="number" id="fMrp" class="fi" placeholder="9999" min="0" step="0.01" oninput="updatePreview()"/>
+              <div class="fhint">Leave blank if no discount</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stock -->
+        <div class="card">
+          <div class="card-head"><span class="card-icon">📦</span><h3>Inventory</h3></div>
+          <div class="g2">
+            <div class="fg">
+              <label>Stock Quantity <span class="req">*</span></label>
+              <input type="number" id="fStock" class="fi" placeholder="100" min="0" step="1" oninput="updatePreview()"/>
+              <div class="fe" id="fe-fStock"></div>
+            </div>
+            <div class="fg" style="padding-top:22px">
+              <div id="stockBadge" style="background:var(--gbg);color:var(--g);font-weight:700;font-size:12.5px;padding:9px 12px;border-radius:8px;text-align:center">✓ In Stock</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Token -->
+        <div class="card">
+          <div class="card-head"><span class="card-icon">🔑</span><h3>Admin Authentication</h3></div>
+          <div class="fg">
+            <label>Admin JWT Token <span class="req">*</span></label>
+            <textarea id="fToken" class="fi" rows="2" style="font-family:monospace;font-size:11px" placeholder="Paste admin JWT token here. Login on website first then copy from browser localStorage."></textarea>
+            <div class="fhint">Login as admin on the main website first — token is auto-filled if you did.</div>
+            <div class="fe" id="fe-fToken"></div>
+          </div>
+          <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+            <button class="btn-sec" style="font-size:12.5px;padding:6px 14px" onclick="verifyToken()">🔍 Verify Token</button>
+            <button class="btn-sec" style="font-size:12.5px;padding:6px 14px;border-color:var(--g);color:var(--g)" onclick="autoFillToken()">⚡ Auto-fill Token</button>
+            <div id="tokenStatus" style="font-size:12.5px;display:none"></div>
+          </div>
+        </div>
+
+        <!-- Bottom actions -->
+        <div style="display:flex;justify-content:flex-end;gap:.6rem;padding-bottom:2rem">
+          <button class="btn-sec" onclick="resetForm()">↺ Reset Form</button>
+          <button class="btn-prim" id="btnSubmit2" onclick="submitProduct()">✓ Add Product to Fasty Shop</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: Live Preview -->
+      <div class="form-col sticky-card">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-icon">👁️</span>
+            <h3>Live Preview</h3>
+            <span style="margin-left:auto;font-size:11px;color:var(--mu);background:var(--gp);padding:2px 9px;border-radius:100px;border:1px solid var(--gbg)">How it looks on site</span>
+          </div>
+          <div class="preview-card">
+            <div class="prev-img" id="prevImgBox">
+              <img id="prevImg" src="" alt="" onerror="this.style.display='none'"/>
+              <div class="prev-img-ph" id="prevPh"><span>🖼️</span><span>No image yet</span></div>
+            </div>
+            <div class="prev-body">
+              <div class="prev-cat" id="prevCat">Category</div>
+              <div class="prev-name" id="prevName">Product Name</div>
+              <div class="prev-stars">★★★★★ <span style="color:var(--mu);font-size:10px">New</span></div>
+              <div style="display:flex;align-items:baseline;flex-wrap:wrap">
+                <span class="prev-price" id="prevPrice">₹0</span>
+                <span class="prev-was" id="prevWas" style="display:none"></span>
+                <span class="prev-disc" id="prevDisc" style="display:none"></span>
+              </div>
+              <div class="prev-btn">+ Add to Cart</div>
+            </div>
+          </div>
+          <div style="margin-top:1rem;border-top:1.5px solid var(--bd);padding-top:1rem">
+            <div class="sum-row"><span>Name</span><span id="sumName">—</span></div>
+            <div class="sum-row"><span>Category</span><span id="sumCat">—</span></div>
+            <div class="sum-row"><span>Price</span><span id="sumPrice">—</span></div>
+            <div class="sum-row"><span>MRP</span><span id="sumMrp">—</span></div>
+            <div class="sum-row"><span>Stock</span><span id="sumStock">—</span></div>
+            <div class="sum-row"><span>Badge</span><span id="sumBadge">None</span></div>
+            <div class="sum-row"><span>Image</span><span id="sumImg">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ DELETE PRODUCTS SECTION ═══════════ -->
+    <div class="section-divider"><span>🗑️ Delete Existing Products</span></div>
+
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-head">
+        <span class="card-icon">🗑️</span>
+        <h3>Delete Products</h3>
+        <span style="margin-left:auto;font-size:12px;color:var(--mu)" id="delCount"></span>
+        <button class="btn-sec" style="margin-left:.5rem;font-size:12px;padding:5px 12px" onclick="loadDelProducts()">↺ Refresh</button>
+      </div>
+      <div class="del-toolbar">
+        <div class="del-search">
+          <input type="text" id="delSrch" placeholder="Search products to delete..." autocomplete="off" oninput="filterDel()"/>
+          <button onclick="filterDel()">🔍</button>
+        </div>
+        <select class="del-sel" id="delCat" onchange="filterDel()">
+          <option value="">All Categories</option>
+          <option>Electronics</option><option>Fashion</option><option>Home &amp; Living</option>
+          <option>Groceries</option><option>Books</option><option>Gaming</option>
+          <option>Beauty</option><option>Sports</option><option>Toys</option><option>Tools</option>
+        </select>
+      </div>
+      <div id="delGrid">
+        <div class="del-loader"><div class="spin"></div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="ov" id="delMod">
+  <div class="dm">
+    <div class="dm-icon">🗑️</div>
+    <img id="dmImg" class="dm-img" src="" alt="" onerror="this.style.display='none'"/>
+    <div class="dm-title">Delete this product?</div>
+    <div class="dm-sub" id="dmSub">This will permanently delete the product and remove its image file from the server. This cannot be undone.</div>
+    <div class="dm-btns">
+      <button class="btn-cancel" onclick="closeDel()">Cancel</button>
+      <button class="btn-del-confirm" id="btnDel" onclick="confirmDel()">🗑️ Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="tIcon">✓</span>&nbsp;<span id="tMsg"></span></div>
+
+<script>
+'use strict';
+const API = 'http://localhost:5000/api';
+
+const CATS = {'1':'Electronics','2':'Fashion','3':'Home & Living','4':'Groceries','5':'Books','6':'Gaming','7':'Beauty','8':'Sports','9':'Toys','10':'Tools'};
+
+/* ── Token helpers ───────────────────────────────────────────── */
+function tok() { return document.getElementById('fToken').value.trim() || localStorage.getItem('fasty_token') || ''; }
+
+function autoFillToken(){
+  const t = localStorage.getItem('fasty_token');
+  if(t){ document.getElementById('fToken').value=t; toast('Token auto-filled from your session!'); verifyToken(); }
+  else toast('No token in localStorage. Please login on the website first.','warn');
+}
+
+/* ── Toast ───────────────────────────────────────────────────── */
+let _tt;
+function toast(msg, type='success'){
+  const el=document.getElementById('toast');
+  el.className=`toast show${type!=='success'?' '+type:''}`;
+  document.getElementById('tIcon').textContent=type==='error'?'✕':type==='warn'?'⚠':'✓';
+  document.getElementById('tMsg').textContent=msg;
+  clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),3200);
+}
+
+/* ── Verify Token ────────────────────────────────────────────── */
+async function verifyToken(){
+  const token = document.getElementById('fToken').value.trim();
+  const status = document.getElementById('tokenStatus');
+  if(!token){ toast('Paste token first','warn'); return; }
+  status.style.display='none';
+  try{
+    const r=await fetch(`${API}/auth/profile`,{headers:{Authorization:`Bearer ${token}`}});
+    const d=await r.json();
+    status.style.display='inline';
+    if(r.ok&&d.success&&d.user.role==='admin'){
+      status.textContent='✓ Valid admin token — '+d.user.name;
+      status.style.color='var(--g)';
+      document.getElementById('aName').textContent='🔑 '+d.user.name;
+      toast('Token verified! ✅');
+    }else{
+      status.textContent='✕ '+(d.message||'Invalid token');
+      status.style.color='var(--er)';
+      toast(d.message||'Invalid token','error');
+    }
+  }catch{
+    status.textContent='⚠ Server unreachable'; status.style.color='var(--or)'; status.style.display='inline';
+    toast('Cannot reach server on port 5000','warn');
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   IMAGE STATE
+════════════════════════════════════════════════════════ */
+let imgMode='upload', files=[], coverIdx=0, urlValid=false;
+
+function switchTab(tab){
+  imgMode=tab;
+  document.getElementById('panUp').style.display=tab==='upload'?'block':'none';
+  document.getElementById('panUrl').style.display=tab==='url'?'block':'none';
+  document.getElementById('itUp').classList.toggle('act',tab==='upload');
+  document.getElementById('itUrl').classList.toggle('act',tab==='url');
+}
+
+function onDrop(e){
+  e.preventDefault();
+  document.getElementById('dz').classList.remove('over');
+  const f=Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/'));
+  if(f.length) processFiles(f); else toast('Drop image files only','warn');
+}
+
+function onFiles(fileList){
+  processFiles(Array.from(fileList).filter(f=>f.type.startsWith('image/')));
+  document.getElementById('fInput').value='';
+}
+
+function processFiles(list){
+  const MAX=5*1024*1024;
+  let pending=0;
+  list.forEach(f=>{
+    if(f.size>MAX){toast(f.name+' is over 5 MB','warn');return;}
+    pending++;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      files.push({file:f,dataUrl:e.target.result,name:f.name});
+      pending--;
+      if(pending===0){ renderThumbs(); updatePreview(); document.getElementById('imgErr').textContent=''; }
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+function renderThumbs(){
+  const w=document.getElementById('thumbs');
+  if(!files.length){w.innerHTML='';return;}
+  w.innerHTML=files.map((f,i)=>`
+    <div class="thumb${i===coverIdx?' cover':''}" onclick="setCover(${i})" title="${f.name}">
+      <img src="${f.dataUrl}" alt="${f.name}"/>
+      <button class="tdel" onclick="event.stopPropagation();removeThumb(${i})">✕</button>
+      <span class="tcov">COVER</span>
+    </div>`).join('');
+  w.innerHTML+=`<button onclick="document.getElementById('fInput').click()" style="width:70px;height:70px;border:2px dashed var(--bd);border-radius:8px;background:var(--gp);cursor:pointer;color:var(--mu);font-size:1.4rem;transition:all .2s" title="Add more">+</button>`;
+}
+
+function setCover(i){coverIdx=i;renderThumbs();updatePreview();}
+
+function removeThumb(i){
+  files.splice(i,1);
+  coverIdx=Math.max(0,Math.min(coverIdx,files.length-1));
+  renderThumbs();updatePreview();
+  if(!files.length) document.getElementById('thumbs').innerHTML='';
+}
+
+function loadUrl(){
+  const url=document.getElementById('imgUrl').value.trim();
+  if(!url){toast('Enter a URL first','warn');return;}
+  urlValid=false;
+  const p=document.getElementById('urlPrv');
+  p.src=url;p.style.display='block';
+}
+
+function hasImage(){ return (imgMode==='upload'&&files.length>0)||(imgMode==='url'&&urlValid); }
+
+function getImgSrc(){
+  if(imgMode==='upload'&&files.length) return files[coverIdx]?.dataUrl||null;
+  if(imgMode==='url'&&urlValid)         return document.getElementById('imgUrl').value.trim();
+  return null;
+}
+
+/* ════════════════════════════════════════════════════════
+   LIVE PREVIEW
+════════════════════════════════════════════════════════ */
+function updatePreview(){
+  const name  = document.getElementById('fName').value.trim()||'Product Name';
+  const price = parseFloat(document.getElementById('fPrice').value)||0;
+  const mrp   = parseFloat(document.getElementById('fMrp').value)||0;
+  const catId = document.getElementById('fCat').value;
+  const badge = document.getElementById('fBadge').value;
+  const stock = parseInt(document.getElementById('fStock').value)||0;
+  const src   = getImgSrc();
+
+  // Image
+  const img=document.getElementById('prevImg'), ph=document.getElementById('prevPh');
+  if(src){img.src=src;img.style.display='block';ph.style.display='none';}
+  else{img.style.display='none';ph.style.display='flex';}
+
+  document.getElementById('prevName').textContent=name.length>36?name.slice(0,36)+'…':name;
+  document.getElementById('prevCat').textContent=CATS[catId]||'Category';
+  document.getElementById('prevPrice').textContent=price?'₹'+price.toLocaleString('en-IN'):'₹0';
+
+  const wasEl=document.getElementById('prevWas'),discEl=document.getElementById('prevDisc');
+  if(mrp>price&&price>0){
+    const p=Math.round((1-price/mrp)*100);
+    wasEl.textContent='₹'+mrp.toLocaleString('en-IN');wasEl.style.display='inline';
+    discEl.textContent=p+'% off';discEl.style.display='inline';
+  }else{wasEl.style.display='none';discEl.style.display='none';}
+
+  // Stock badge
+  const sb=document.getElementById('stockBadge');
+  if(stock<=0){sb.style.background='#f8d7da';sb.style.color='var(--er)';sb.textContent='✕ Out of Stock';}
+  else if(stock<10){sb.style.background='#fff3cd';sb.style.color='#856404';sb.textContent='⚠ Low Stock ('+stock+')';}
+  else{sb.style.background='var(--gbg)';sb.style.color='var(--g)';sb.textContent='✓ In Stock ('+stock+')';}
+
+  // Summary
+  document.getElementById('sumName').textContent=name!=='Product Name'?name.slice(0,24):'—';
+  document.getElementById('sumCat').textContent=CATS[catId]||'—';
+  document.getElementById('sumPrice').textContent=price?'₹'+price.toLocaleString('en-IN'):'—';
+  document.getElementById('sumMrp').textContent=mrp?'₹'+mrp.toLocaleString('en-IN'):'—';
+  document.getElementById('sumStock').textContent=stock||'—';
+  document.getElementById('sumBadge').textContent=badge||'None';
+  document.getElementById('sumImg').textContent=hasImage()?(imgMode==='upload'?files.length+' file(s)':'URL ✓'):'—';
+}
+
+/* ════════════════════════════════════════════════════════
+   SUBMIT PRODUCT
+════════════════════════════════════════════════════════ */
+function setErr(id,msg){const e=document.getElementById('fe-'+id);if(e)e.textContent=msg;const i=document.getElementById(id);if(i)i.classList.toggle('err',!!msg);}
+function clrErr(id){setErr(id,'');}
+
+function validateForm(){
+  let ok=true;
+  clrErr('fName');clrErr('fCat');clrErr('fPrice');clrErr('fStock');clrErr('fToken');
+  document.getElementById('imgErr').textContent='';
+
+  if(!hasImage()){document.getElementById('imgErr').textContent='Please upload an image or enter a valid image URL.';ok=false;}
+  const name=document.getElementById('fName').value.trim();
+  if(!name||name.length<2){setErr('fName','Product name is required (min 2 chars).');ok=false;}
+  if(!document.getElementById('fCat').value){setErr('fCat','Please select a category.');ok=false;}
+  const price=parseFloat(document.getElementById('fPrice').value);
+  if(!price||price<=0){setErr('fPrice','Enter a valid selling price.');ok=false;}
+  const stock=parseInt(document.getElementById('fStock').value);
+  if(isNaN(stock)||stock<0){setErr('fStock','Stock must be 0 or more.');ok=false;}
+  const token=document.getElementById('fToken').value.trim();
+  if(!token){setErr('fToken','Admin token is required.');ok=false;}
+  return ok;
+}
+
+async function submitProduct(){
+  if(!validateForm()){toast('Please fix the errors above','error');window.scrollTo({top:0,behavior:'smooth'});return;}
+
+  const token=document.getElementById('fToken').value.trim();
+  const [b1,b2]=[document.getElementById('btnSubmit'),document.getElementById('btnSubmit2')];
+  [b1,b2].forEach(b=>{b.textContent='⏳ Adding...';b.disabled=true;});
+
+  const fd=new FormData();
+  fd.append('name',    document.getElementById('fName').value.trim());
+  fd.append('description',document.getElementById('fDesc').value.trim());
+  fd.append('price',   document.getElementById('fPrice').value);
+  fd.append('original_price',document.getElementById('fMrp').value||'');
+  fd.append('stock',   document.getElementById('fStock').value||'0');
+  fd.append('category_id',document.getElementById('fCat').value);
+  fd.append('badge',   document.getElementById('fBadge').value||'');
+
+  if(imgMode==='upload'&&files.length){
+    const ordered=[...files];
+    const [cover]=ordered.splice(coverIdx,1);
+    [cover,...ordered].forEach((f,i)=>fd.append(i===0?'image':`image_extra_${i}`,f.file,f.name));
+  }else if(imgMode==='url'&&urlValid){
+    fd.append('image_url',document.getElementById('imgUrl').value.trim());
+  }
+
+  let ok=false,msg='',id=null;
+  try{
+    const r=await fetch(`${API}/products`,{method:'POST',headers:{Authorization:`Bearer ${token}`},body:fd});
+    const d=await r.json();
+    if(r.ok&&d.success){ok=true;id=d.id;msg=`"${document.getElementById('fName').value.trim()}" added with ID #${id}`;}
+    else msg=d.message||(r.status===401?'Token invalid — please login again and copy your token.':'Server error.');
+  }catch(e){msg='Network error: '+e.message;}
+
+  [b1,b2].forEach(b=>{b.textContent='✓ Add Product';b.disabled=false;});
+
+  if(ok){
+    document.getElementById('alEr').style.display='none';
+    document.getElementById('alOkMsg').textContent=msg;
+    document.getElementById('alOk').style.display='flex';
+    toast('Product added! 🎉');
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(()=>loadDelProducts(),800); // refresh delete section
+  }else{
+    document.getElementById('alOk').style.display='none';
+    document.getElementById('alErMsg').textContent=msg;
+    document.getElementById('alEr').style.display='flex';
+    toast(msg,'error');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+function resetForm(){
+  ['fName','fDesc','fPrice','fMrp','fStock','imgUrl'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('fCat').value='';document.getElementById('fBadge').value='';
+  files=[];coverIdx=0;urlValid=false;
+  document.getElementById('thumbs').innerHTML='';
+  document.getElementById('urlPrv').style.display='none';
+  document.querySelectorAll('.fe').forEach(e=>e.textContent='');
+  document.querySelectorAll('.fi').forEach(e=>e.classList.remove('err'));
+  document.getElementById('imgErr').textContent='';
+  document.getElementById('alOk').style.display='none';
+  document.getElementById('alEr').style.display='none';
+  document.getElementById('tokenStatus').style.display='none';
+  updatePreview();
+  toast('Form reset','warn');
+}
+
+/* ════════════════════════════════════════════════════════
+   DELETE PRODUCTS SECTION
+════════════════════════════════════════════════════════ */
+let allProds=[], delFiltered=[], delId=null, delProd=null;
+
+async function loadDelProducts(){
+  document.getElementById('delGrid').innerHTML='<div class="del-loader"><div class="spin"></div></div>';
+  try{
+    const r=await fetch(`${API}/products?limit=500`);
+    const d=await r.json();
+    if(!r.ok||!d.success){
+      document.getElementById('delGrid').innerHTML='<div class="del-empty"><div class="ei">⚠️</div><p>Could not load products. Is the server running?</p></div>';
+      return;
+    }
+    allProds=d.data||[];
+    document.getElementById('delCount').textContent=allProds.length+' products';
+    filterDel();
+  }catch(e){
+    document.getElementById('delGrid').innerHTML='<div class="del-empty"><div class="ei">⚠️</div><p>Cannot reach server on port 5000.</p></div>';
+  }
+}
+
+function filterDel(){
+  const q=document.getElementById('delSrch').value.trim().toLowerCase();
+  const cat=document.getElementById('delCat').value;
+  delFiltered=allProds.filter(p=>{
+    if(q&&!p.name.toLowerCase().includes(q)&&!(p.category_name||'').toLowerCase().includes(q))return false;
+    if(cat&&p.category_name!==cat)return false;
+    return true;
+  });
+  renderDel();
+}
+
+const IMGS={1:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=70',2:'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&q=70',3:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=70',4:'https://images.unsplash.com/photo-1585515320310-259814833e62?w=300&q=70',5:'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300&q=70',6:'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=300&q=70',7:'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300&q=70',8:'https://images.unsplash.com/photo-1601925228998-36e673eadffb?w=300&q=70',9:'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=300&q=70',10:'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=300&q=70',11:'https://images.unsplash.com/photo-1593359677879-a4bb92f4834f?w=300&q=70',12:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=300&q=70'};
+function bestImg(p){return p.image_url||IMGS[p.id]||null;}
+
+function renderDel(){
+  const grid=document.getElementById('delGrid');
+  if(!delFiltered.length){
+    grid.innerHTML='<div class="del-empty"><div class="ei">🔍</div><p>No products found.</p></div>';
+    return;
+  }
+  grid.innerHTML='<div class="prod-grid">'+delFiltered.map(p=>{
+    const src=bestImg(p);
+    const imgEl=src
+      ?`<img src="${src}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.querySelector('.no-img').style.display='flex'"/><div class="no-img" style="display:none">🖼️</div>`
+      :`<div class="no-img">🖼️</div>`;
+    const bp=p.badge?`<span class="prod-badge pb-${p.badge}">${p.badge.toUpperCase()}</span>`:'';
+    const esc=s=>(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    return`<div class="prod-card">
+      <div class="prod-card-img">${bp}${imgEl}</div>
+      <div class="prod-card-body">
+        <div class="prod-card-name">${p.name}</div>
+        <div class="prod-card-cat">${p.category_name||'—'} · ID #${p.id}</div>
+        <div style="display:flex;align-items:center">
+          <span class="prod-card-price">₹${Number(p.price).toLocaleString('en-IN')}</span>
+          <span class="prod-card-stock">(${p.stock} in stock)</span>
+        </div>
+        <button class="prod-card-del" onclick="openDel(${p.id},'${esc(p.name)}','${bestImg(p)||''}')">
+          🗑️ Delete Product
+        </button>
+      </div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function openDel(id, name, imgSrc){
+  delId=id;
+  document.getElementById('dmSub').textContent=`Delete "${name}"? This will permanently remove it from the website. This cannot be undone.`;
+  const dmImg=document.getElementById('dmImg');
+  if(imgSrc){dmImg.src=imgSrc;dmImg.style.display='block';}else dmImg.style.display='none';
+  document.getElementById('delMod').classList.add('open');
+}
+
+function closeDel(){document.getElementById('delMod').classList.remove('open');delId=null;}
+
+async function confirmDel(){
+  if(!delId)return;
+  const token=tok();
+  if(!token){toast('Please enter/verify your admin token first','warn');closeDel();return;}
+  const btn=document.getElementById('btnDel');
+  btn.textContent='Deleting...';btn.disabled=true;
+  try{
+    const r=await fetch(`${API}/products/${delId}`,{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});
+    const d=await r.json();
+    btn.textContent='🗑️ Delete';btn.disabled=false;
+    closeDel();
+    if(r.ok&&d.success){
+      toast('Product deleted! ✅');
+      allProds=allProds.filter(p=>p.id!==delId);
+      document.getElementById('delCount').textContent=allProds.length+' products';
+      filterDel();
+    }else if(r.status===401){
+      toast('Token invalid or expired. Please verify your token.','error');
+    }else{
+      toast(d.message||'Delete failed','error');
+    }
+  }catch(e){
+    btn.textContent='🗑️ Delete';btn.disabled=false;
+    closeDel();
+    toast('Network error: '+e.message,'error');
+  }
+}
+
+/* ── Init ────────────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', ()=>{
+  // Auto-fill token from localStorage
+  const t=localStorage.getItem('fasty_token');
+  if(t){
+    document.getElementById('fToken').value=t;
+    // Show admin name
+    try{
+      const u=JSON.parse(localStorage.getItem('fasty_user')||'null');
+      if(u&&u.role==='admin') document.getElementById('aName').textContent='🔑 '+u.name;
+    }catch{}
+  }
+
+  updatePreview();
+  loadDelProducts(); // Load products for the delete section
+});
+</script>
+</body>
+</html>

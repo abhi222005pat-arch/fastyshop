@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Manage Products — Fasty Shop Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--g:#3a7d2c;--gl:#5aab47;--gbg:#d6eacc;--gp:#eef6e8;--or:#e07b1a;--ol:#f59e2a;--br:#2e1a0e;--tx:#1a1a1a;--mu:#6b6b6b;--bd:#d4e8c8;--sf:#fff;--bg:#f0f7eb;--er:#e63946;--ok:#22c55e;--fh:'Nunito',sans-serif;--fb:'Poppins',sans-serif}
+    body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:14px;line-height:1.6;min-height:100vh}
+
+    /* TOPBAR */
+    .tb{background:var(--sf);border-bottom:2px solid var(--gbg);padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(58,125,44,.08)}
+    .logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none}
+    .li{width:34px;height:34px;background:linear-gradient(135deg,var(--or),var(--ol));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+    .ln{font-family:var(--fh);font-size:.95rem;font-weight:900;color:var(--br);display:block}
+    .ls{font-size:9px;font-weight:700;color:var(--or);letter-spacing:2px;text-transform:uppercase;display:block}
+    .tl{display:flex;gap:6px;align-items:center}
+    .tk{border:1.5px solid var(--bd);color:var(--mu);font-size:12px;font-family:var(--fb);padding:5px 12px;border-radius:7px;cursor:pointer;text-decoration:none;background:none;transition:all .2s;white-space:nowrap}
+    .tk:hover{border-color:var(--g);color:var(--g)} .tk.act{background:var(--g);color:#fff;border-color:var(--g)}
+    .ab{background:var(--gp);color:var(--g);font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;border:1.5px solid var(--gbg)}
+
+    /* LAYOUT */
+    .lay{display:grid;grid-template-columns:190px 1fr;min-height:calc(100vh - 58px)}
+    .sb{background:var(--sf);border-right:1.5px solid var(--bd);padding:1.1rem .85rem;position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+    .ni{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--mu);text-decoration:none;margin-bottom:2px;transition:all .2s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+    .ni:hover{background:var(--gp);color:var(--g)} .ni.act{background:var(--g);color:#fff;font-weight:700}
+
+    /* MAIN */
+    .mn{padding:1.75rem}
+    .ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem}
+    .pt{font-family:var(--fh);font-size:1.5rem;font-weight:900;color:var(--br)}
+    .ps{color:var(--mu);font-size:12.5px;margin-top:2px}
+
+    /* STATS */
+    .sr{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.85rem;margin-bottom:1.25rem}
+    .sc{background:var(--sf);border:1.5px solid var(--bd);border-radius:12px;padding:.85rem 1rem;box-shadow:0 4px 20px rgba(58,125,44,.08)}
+    .sl{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+    .sv{font-family:var(--fh);font-size:1.5rem;font-weight:900;color:var(--br)}
+    .sv.g{color:var(--g)} .sv.o{color:var(--or)} .sv.r{color:var(--er)}
+
+    /* TOOLBAR */
+    .tb2{display:flex;gap:.6rem;align-items:center;margin-bottom:1.1rem;flex-wrap:wrap}
+    .si{display:flex;align-items:center;background:var(--sf);border:1.5px solid var(--bd);border-radius:100px;overflow:hidden;flex:1;max-width:320px}
+    .si input{background:none;border:none;outline:none;font-family:var(--fb);font-size:13px;padding:7px 14px;width:100%;color:var(--tx)}
+    .si input::placeholder{color:var(--mu)}
+    .si button{background:var(--g);border:none;color:#fff;padding:7px 13px;cursor:pointer;font-size:13px}
+    .sel{background:var(--sf);border:1.5px solid var(--bd);color:var(--tx);font-family:var(--fb);font-size:12.5px;padding:7px 11px;border-radius:8px;cursor:pointer;outline:none}
+    .badd{background:linear-gradient(135deg,var(--g),var(--gl));color:#fff;font-family:var(--fh);font-weight:800;font-size:13px;border:none;padding:9px 20px;border-radius:9px;cursor:pointer;display:flex;align-items:center;gap:5px;margin-left:auto;box-shadow:0 4px 14px rgba(58,125,44,.2);transition:all .2s}
+    .badd:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(58,125,44,.3)}
+
+    /* TABLE */
+    .tw{background:var(--sf);border:1.5px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(58,125,44,.08)}
+    table{width:100%;border-collapse:collapse}
+    thead{background:var(--gp)}
+    th{padding:11px 13px;text-align:left;font-family:var(--fh);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);white-space:nowrap}
+    td{padding:10px 13px;border-top:1px solid var(--gbg);vertical-align:middle;font-size:13px}
+    tr:hover td{background:var(--gp)}
+
+    .pt2{display:flex;align-items:center;gap:10px}
+    .pthumb{width:50px;height:50px;border-radius:9px;object-fit:cover;border:1.5px solid var(--bd);display:block;flex-shrink:0}
+    .pthumb-ph{width:50px;height:50px;border-radius:9px;background:var(--gp);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;color:var(--mu)}
+    .pn{font-family:var(--fh);font-weight:700;color:var(--br);font-size:.88rem;line-height:1.3}
+    .pid{font-size:11px;color:var(--mu);margin-top:1px}
+    .ppr{font-family:var(--fh);font-weight:800;color:var(--g)}
+    .pwp{font-size:11px;color:var(--mu);text-decoration:line-through;display:block}
+    .sok{color:var(--g);font-weight:700} .slow{color:#856404;font-weight:700} .sout{color:var(--er);font-weight:700}
+    .bp{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;text-transform:uppercase}
+    .bpsale{background:var(--or);color:#fff} .bpnew{background:var(--g);color:#fff} .bphot{background:var(--er);color:#fff} .bpnone{background:var(--gbg);color:var(--mu)}
+    .acts{display:flex;gap:5px}
+    .be{background:var(--gp);border:1.5px solid var(--gbg);color:var(--g);font-size:12px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;transition:all .2s}
+    .be:hover{background:var(--g);color:#fff}
+    .bd2{background:#fce8ea;border:1.5px solid #f5c2c7;color:var(--er);font-size:12px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;transition:all .2s}
+    .bd2:hover{background:var(--er);color:#fff}
+    .er2{text-align:center;padding:2.5rem;color:var(--mu);font-size:13.5px}
+
+    /* PAGINATION */
+    .pgw{display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:1rem;flex-wrap:wrap}
+    .pgb{background:var(--sf);border:1.5px solid var(--bd);color:var(--mu);font-size:12.5px;padding:5px 12px;border-radius:7px;cursor:pointer;transition:all .2s}
+    .pgb:hover,.pgb.act{background:var(--g);color:#fff;border-color:var(--g)}
+    .pgb:disabled{opacity:.4;cursor:not-allowed}
+    .pgi{font-size:12px;color:var(--mu);margin-right:4px}
+
+    /* MODAL OVERLAY */
+    .ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;padding:1rem}
+    .ov.open{display:flex}
+    .mod{background:#fff;border-radius:16px;padding:1.75rem;width:100%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:pi .25s ease}
+    @keyframes pi{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+    .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;padding-bottom:.9rem;border-bottom:1.5px solid var(--bd)}
+    .mt{font-family:var(--fh);font-size:1.1rem;font-weight:900;color:var(--br)}
+    .mc{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--mu);transition:color .2s}
+    .mc:hover{color:var(--er)}
+    .g2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem}
+    .g1{margin-bottom:.8rem}
+    .fg{display:flex;flex-direction:column;gap:4px}
+    .fg label{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+    .fi{background:var(--gp);border:1.5px solid var(--bd);color:var(--tx);font-family:var(--fb);font-size:13px;padding:9px 12px;border-radius:9px;outline:none;transition:all .2s;width:100%}
+    .fi:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(58,125,44,.1);background:#fff}
+    .fi.err{border-color:var(--er);background:#fff5f5}
+    select.fi{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b6b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+    textarea.fi{resize:vertical;min-height:70px;line-height:1.5}
+    .fe{font-size:11px;color:var(--er);margin-top:2px;min-height:14px}
+    .req{color:var(--er)}
+
+    /* IMAGE section in modal */
+    .isec{background:var(--gp);border:1.5px solid var(--bd);border-radius:10px;padding:1rem;margin-bottom:.9rem}
+    .isec-t{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+    .ci{display:flex;align-items:center;gap:10px;padding:9px;background:var(--sf);border-radius:8px;border:1.5px solid var(--bd);margin-bottom:9px}
+    .ci img{width:54px;height:54px;object-fit:cover;border-radius:7px;background:var(--bg)}
+    .ci span{font-size:12px;color:var(--mu);line-height:1.5}
+    .itb{display:flex;gap:5px;margin-bottom:9px}
+    .it{flex:1;background:var(--sf);border:1.5px solid var(--bd);color:var(--mu);font-size:12px;font-weight:600;padding:7px;border-radius:7px;cursor:pointer;transition:all .2s}
+    .it.act{background:var(--g);color:#fff;border-color:var(--g)}
+    .dz{border:2.5px dashed var(--gbg);border-radius:9px;padding:1.4rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--sf)}
+    .dz:hover{border-color:var(--g);background:var(--gp)}
+    .dz .dzicon{font-size:1.6rem;margin-bottom:4px}
+    .dz p{font-size:12px;color:var(--mu)}
+    .ur{display:flex;margin-top:3px}
+    .ur .fi{border-radius:9px 0 0 9px;border-right:none}
+    .bload{background:var(--g);color:#fff;border:none;font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:0 9px 9px 0;cursor:pointer;white-space:nowrap;transition:all .2s}
+    .bload:hover{background:var(--gl)}
+    .prv{width:100%;max-height:140px;object-fit:contain;border-radius:8px;margin-top:8px;background:var(--gp);display:none;border:1.5px solid var(--bd)}
+
+    /* Modal alert */
+    .mal{display:none;align-items:flex-start;gap:8px;padding:.8rem 1rem;border-radius:9px;font-size:13px;margin-bottom:.8rem}
+    .mal.err{background:#f8d7da;border:1.5px solid #f5c2c7;color:#721c24}
+    .mal.ok{background:#d4edda;border:1.5px solid #b8dfc4;color:#155724}
+
+    /* Modal footer */
+    .mf{display:flex;justify-content:flex-end;gap:7px;margin-top:1.25rem;padding-top:.9rem;border-top:1.5px solid var(--bd)}
+    .bcan{background:none;border:1.5px solid var(--bd);color:var(--mu);font-family:var(--fb);font-size:13px;padding:8px 18px;border-radius:9px;cursor:pointer;transition:all .2s}
+    .bcan:hover{border-color:var(--er);color:var(--er)}
+    .bsave{background:linear-gradient(135deg,var(--g),var(--gl));color:#fff;font-family:var(--fh);font-weight:800;font-size:13.5px;border:none;padding:9px 26px;border-radius:9px;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(58,125,44,.25)}
+    .bsave:hover{transform:translateY(-1px)} .bsave:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+    /* Delete confirm modal */
+    .dm{background:#fff;border-radius:16px;padding:2rem;width:100%;max-width:400px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:pi .25s ease}
+    .di{font-size:3rem;margin-bottom:.65rem} .dt{font-family:var(--fh);font-size:1.15rem;font-weight:900;color:var(--br);margin-bottom:.4rem}
+    .ds{color:var(--mu);font-size:13px;margin-bottom:1.35rem;line-height:1.5;padding:0 .5rem}
+    .db{display:flex;gap:7px;justify-content:center}
+    .bdel{background:var(--er);color:#fff;font-family:var(--fh);font-weight:800;font-size:13.5px;border:none;padding:9px 26px;border-radius:9px;cursor:pointer;transition:all .2s}
+    .bdel:hover{background:#c62333}
+
+    /* LOGIN OVERLAY */
+    .lov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;align-items:center;justify-content:center;padding:1rem}
+    .lov.open{display:flex}
+    .lc{background:#fff;border-radius:18px;padding:2.25rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+    .llogo{font-size:2.5rem;text-align:center;margin-bottom:.75rem}
+    .ltt{font-family:var(--fh);font-size:1.35rem;font-weight:900;color:var(--br);text-align:center;margin-bottom:3px}
+    .lsb{color:var(--mu);font-size:12.5px;text-align:center;margin-bottom:1.5rem}
+    .lerr{background:#fce8ea;border:1px solid #f5c2c7;color:var(--er);font-size:12.5px;padding:9px 12px;border-radius:8px;margin-bottom:.9rem;display:none}
+    .lfg{display:flex;flex-direction:column;gap:4px;margin-bottom:.8rem}
+    .lfg label{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px}
+    .lbtn{width:100%;background:linear-gradient(135deg,var(--g),var(--gl));color:#fff;font-family:var(--fh);font-weight:900;font-size:.95rem;border:none;padding:12px;border-radius:10px;cursor:pointer;box-shadow:0 4px 14px rgba(58,125,44,.3);margin-top:3px;transition:all .2s}
+    .lbtn:hover{transform:translateY(-1px)} .lbtn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .lhi{font-size:11.5px;color:var(--mu);text-align:center;margin-top:.9rem;line-height:1.6}
+    .lhi strong{color:var(--g)}
+
+    /* SPINNER & TOAST */
+    .spin{width:36px;height:36px;border:4px solid var(--gbg);border-top-color:var(--g);border-radius:50%;animation:sp .8s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--g);color:#fff;font-size:13.5px;font-weight:500;padding:11px 20px;border-radius:11px;z-index:600;display:flex;align-items:center;gap:7px;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 4px 20px rgba(58,125,44,.3);max-width:320px}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.error{background:var(--er)} .toast.warn{background:var(--or)}
+
+    @media(max-width:768px){.lay{grid-template-columns:1fr}.sb{display:none}.g2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="tb">
+  <a href="/" class="logo">
+    <div class="li">🛒</div>
+    <div><span class="ln">FASTY SHOP</span><span class="ls">Admin Panel</span></div>
+  </a>
+  <div class="tl">
+    <span class="ab" id="aName">🔑 Admin</span>
+    <a href="/" class="tk">🌐 Website</a>
+    <a href="/admin-products.html" class="tk act">📦 Products</a>
+    <a href="/admin-orders.html" class="tk">📋 Orders</a>
+    <button class="tk" onclick="doLogout()" style="color:var(--er);border-color:var(--er);">🚪 Logout</button>
+  </div>
+</header>
+
+<div class="lay">
+  <aside class="sb">
+    <a href="/"                    class="ni">🌐 View Website</a>
+    <a href="/admin-products.html" class="ni act">📦 Manage Products</a>
+    <a href="/admin-orders.html"   class="ni">📋 Orders</a>
+    <hr style="border:none;border-top:1px solid var(--bd);margin:10px 0"/>
+    <button class="ni" onclick="doLogout()" style="color:var(--er);">🚪 Logout</button>
+  </aside>
+
+  <main class="mn">
+    <!-- Header -->
+    <div class="ph">
+      <div>
+        <h1 class="pt">📦 Manage Products</h1>
+        <p class="ps">Add, edit, delete and manage all your products</p>
+      </div>
+      <button class="badd" onclick="openAdd()">➕ Add New Product</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="sr">
+      <div class="sc"><div class="sl">Total Products</div><div class="sv g" id="sTot">—</div></div>
+      <div class="sc"><div class="sl">In Stock</div><div class="sv"  id="sIn">—</div></div>
+      <div class="sc"><div class="sl">Low Stock</div><div class="sv o" id="sLow">—</div></div>
+      <div class="sc"><div class="sl">Out of Stock</div><div class="sv r" id="sOut">—</div></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="tb2">
+      <div class="si">
+        <input type="text" id="srch" placeholder="Search products..." oninput="ft()" autocomplete="off"/>
+        <button onclick="ft()">🔍</button>
+      </div>
+      <select class="sel" id="catF" onchange="ft()">
+        <option value="">All Categories</option>
+        <option>Electronics</option><option>Fashion</option><option>Home &amp; Living</option>
+        <option>Groceries</option><option>Books</option><option>Gaming</option>
+        <option>Beauty</option><option>Sports</option><option>Toys</option><option>Tools</option>
+      </select>
+      <select class="sel" id="badgeF" onchange="ft()">
+        <option value="">All Badges</option>
+        <option value="sale">Sale</option><option value="new">New</option><option value="hot">Hot</option>
+      </select>
+      <select class="sel" id="stockF" onchange="ft()">
+        <option value="">All Stock</option>
+        <option value="in">In Stock</option><option value="low">Low Stock</option><option value="out">Out of Stock</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="tw">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px;">#</th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Badge</th>
+            <th>Category</th>
+            <th style="width:140px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="7" style="text-align:center;padding:3rem"><div class="spin" style="margin:0 auto"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pgw" id="pgn"></div>
+  </main>
+</div>
+
+<!-- ═══ ADD / EDIT MODAL ═══ -->
+<div class="ov" id="pMod">
+  <div class="mod">
+    <div class="mh">
+      <div class="mt" id="modT">➕ Add New Product</div>
+      <button class="mc" onclick="closeMod()">✕</button>
+    </div>
+    <div class="mal" id="mAl"></div>
+
+    <!-- Image section -->
+    <div class="isec">
+      <div class="isec-t">Product Image</div>
+      <div id="ciRow" class="ci" style="display:none">
+        <img id="ciImg" src="" alt="" onerror="this.parentElement.style.display='none'"/>
+        <span>Current image — upload a new file or enter URL below to replace it.</span>
+      </div>
+      <div class="itb">
+        <button class="it act" id="itUp"  onclick="switchTab('upload')">📁 Upload File</button>
+        <button class="it"     id="itUrl" onclick="switchTab('url')">🔗 Image URL</button>
+      </div>
+      <div id="panUp">
+        <div class="dz" id="dz" ondragover="ev.preventDefault()" onclick="document.getElementById('mFile').click()">
+          <div class="dzicon">📂</div>
+          <p>Click to upload or drag &amp; drop<br/>JPG, PNG, WebP · Max 5 MB</p>
+          <input type="file" id="mFile" accept="image/*" style="display:none" onchange="onFile(this.files[0])"/>
+        </div>
+        <div id="fileInfo" style="font-size:12px;color:var(--g);margin-top:6px;display:none;font-weight:600;"></div>
+      </div>
+      <div id="panUrl" style="display:none">
+        <div class="ur">
+          <input type="url" id="mUrl" class="fi" placeholder="https://example.com/product-image.jpg"/>
+          <button class="bload" onclick="loadUrl()">Load →</button>
+        </div>
+        <div style="font-size:11.5px;color:var(--mu);margin-top:5px">Paste a direct image link and click Load to preview</div>
+      </div>
+      <img id="mPrv" class="prv" src="" alt="preview"
+           onload="this.style.display='block'" onerror="this.style.display='none'"/>
+    </div>
+
+    <!-- Form fields -->
+    <div class="g2">
+      <div class="fg">
+        <label>Product Name <span class="req">*</span></label>
+        <input type="text" id="mName" class="fi" placeholder="e.g. Sony WH-1000XM5"/>
+        <div class="fe" id="fe-mName"></div>
+      </div>
+      <div class="fg">
+        <label>Category <span class="req">*</span></label>
+        <select id="mCat" class="fi">
+          <option value="">-- Select Category --</option>
+          <option value="1">📱 Electronics</option><option value="2">👗 Fashion</option>
+          <option value="3">🏠 Home &amp; Living</option><option value="4">🍎 Groceries</option>
+          <option value="5">📚 Books</option><option value="6">🎮 Gaming</option>
+          <option value="7">💄 Beauty</option><option value="8">⚽ Sports</option>
+          <option value="9">🧸 Toys</option><option value="10">🔧 Tools</option>
+        </select>
+        <div class="fe" id="fe-mCat"></div>
+      </div>
+    </div>
+    <div class="g1">
+      <div class="fg">
+        <label>Description</label>
+        <textarea id="mDesc" class="fi" placeholder="Features, specs, what's in the box..."></textarea>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fg">
+        <label>Selling Price (₹) <span class="req">*</span></label>
+        <input type="number" id="mPrice" class="fi" placeholder="4999" min="0" step="0.01"/>
+        <div class="fe" id="fe-mPrice"></div>
+      </div>
+      <div class="fg">
+        <label>Original / MRP (₹)</label>
+        <input type="number" id="mMrp" class="fi" placeholder="9999 (optional)" min="0" step="0.01"/>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fg">
+        <label>Stock Quantity <span class="req">*</span></label>
+        <input type="number" id="mStock" class="fi" placeholder="100" min="0" step="1"/>
+        <div class="fe" id="fe-mStock"></div>
+      </div>
+      <div class="fg">
+        <label>Badge</label>
+        <select id="mBadge" class="fi">
+          <option value="">None</option>
+          <option value="sale">🏷️ Sale</option>
+          <option value="new">✨ New</option>
+          <option value="hot">🔥 Hot</option>
+        </select>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="bcan" onclick="closeMod()">Cancel</button>
+      <button class="bsave" id="bSave" onclick="save()">✓ Add Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DELETE MODAL ═══ -->
+<div class="ov" id="dMod">
+  <div class="dm">
+    <div class="di">🗑️</div>
+    <div class="dt">Delete Product?</div>
+    <div class="ds" id="dSub">This action cannot be undone.</div>
+    <div class="db">
+      <button class="bcan" onclick="closeDel()">Cancel</button>
+      <button class="bdel" id="bDel" onclick="doDel()">🗑️ Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LOGIN OVERLAY ═══ -->
+<div class="lov" id="loginOv">
+  <div class="lc">
+    <div class="llogo">🛒</div>
+    <div class="ltt">Admin Login Required</div>
+    <div class="lsb">Login with your admin account to manage products</div>
+    <div class="lerr" id="lErr"></div>
+    <div class="lfg">
+      <label>Email Address</label>
+      <input type="email" id="lEmail" class="fi" placeholder="admin@fastyshop.com"/>
+    </div>
+    <div class="lfg">
+      <label>Password</label>
+      <input type="password" id="lPass" class="fi" placeholder="Admin@123"/>
+    </div>
+    <button class="lbtn" id="lBtn" onclick="doLogin()">Login as Admin →</button>
+    <div class="lhi">Default credentials:<br/><strong>admin@fastyshop.com</strong> / <strong>Admin@123</strong></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="tIcon">✓</span>&nbsp;<span id="tMsg"></span></div>
+
+<script>
+'use strict';
+
+const API = 'http://localhost:5000/api';
+
+/* ─── Token helpers ─────────────────────────────────────────── */
+function tok()  { return localStorage.getItem('fasty_token') || ''; }
+function usr()  { try{ return JSON.parse(localStorage.getItem('fasty_user')||'null'); }catch{return null;} }
+function clrTok() { localStorage.removeItem('fasty_token'); localStorage.removeItem('fasty_user'); }
+
+/* ─── IMGS fallback for products with no image_url ──────────── */
+const IMGS = {
+  1:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80',
+  2:'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&q=80',
+  3:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80',
+  4:'https://images.unsplash.com/photo-1585515320310-259814833e62?w=400&q=80',
+  5:'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&q=80',
+  6:'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=400&q=80',
+  7:'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&q=80',
+  8:'https://images.unsplash.com/photo-1601925228998-36e673eadffb?w=400&q=80',
+  9:'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=400&q=80',
+  10:'https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400&q=80',
+  11:'https://images.unsplash.com/photo-1593359677879-a4bb92f4834f?w=400&q=80',
+  12:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80',
+};
+function bestImg(p){ return p.image_url || IMGS[p.id] || null; }
+
+/* ─── State ─────────────────────────────────────────────────── */
+let all=[], filtered=[], editId=null, delId=null;
+let imgMode='upload', imgFile=null, imgUrlVal='';
+let pg=1; const PS=15;
+
+/* ─── Toast ─────────────────────────────────────────────────── */
+let _tt;
+function toast(msg, type='success'){
+  const t=document.getElementById('toast');
+  t.className=`toast show${type!=='success'?' '+type:''}`;
+  document.getElementById('tIcon').textContent=type==='error'?'✕':type==='warn'?'⚠':'✓';
+  document.getElementById('tMsg').textContent=msg;
+  clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+/* ─── Auth ──────────────────────────────────────────────────── */
+function showLogin(msg=''){
+  const ov=document.getElementById('loginOv');
+  ov.classList.add('open');
+  const err=document.getElementById('lErr');
+  if(msg){ err.textContent=msg; err.style.display='block'; }
+  else err.style.display='none';
+}
+
+function isAdmin(){
+  const token=tok(); const user=usr();
+  if(!token||!user||user.role!=='admin') return false;
+  return true;
+}
+
+function requireAdmin(){
+  if(!isAdmin()){
+    showLogin('Please login as admin to perform this action.');
+    return false;
+  }
+  return true;
+}
+
+// Called after any 401 response from backend
+function handle401(){
+  clrTok();
+  showLogin('Session expired or token invalid. Please login again.');
+}
+
+async function doLogin(){
+  const email=document.getElementById('lEmail').value.trim();
+  const pass=document.getElementById('lPass').value;
+  const errEl=document.getElementById('lErr');
+  const btn=document.getElementById('lBtn');
+  errEl.style.display='none';
+  if(!email||!pass){ errEl.textContent='Email and password required.'; errEl.style.display='block'; return; }
+  btn.textContent='Logging in...'; btn.disabled=true;
+  try{
+    const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const d=await r.json();
+    btn.textContent='Login as Admin →'; btn.disabled=false;
+    if(d.success){
+      if(d.user.role!=='admin'){ errEl.textContent='This account is not an admin.'; errEl.style.display='block'; return; }
+      localStorage.setItem('fasty_token', d.token);
+      localStorage.setItem('fasty_user',  JSON.stringify(d.user));
+      document.getElementById('loginOv').classList.remove('open');
+      document.getElementById('aName').textContent='🔑 '+d.user.name;
+      toast('Logged in as admin! ✅');
+      loadAll();
+    }else{
+      errEl.textContent=d.message||'Login failed.'; errEl.style.display='block';
+    }
+  }catch(e){
+    btn.textContent='Login as Admin →'; btn.disabled=false;
+    errEl.textContent='Cannot reach server. Is it running on port 5000?'; errEl.style.display='block';
+  }
+}
+
+function doLogout(){
+  clrTok(); window.location.href='/';
+}
+
+/* ─── API helper (for admin actions only) ────────────────────── */
+async function adminFetch(endpoint, opts={}){
+  const token=tok();
+  if(!token){ showLogin('Please login first.'); return{ok:false,data:{success:false,message:'Not logged in.'}}; }
+  const headers={Authorization:`Bearer ${token}`, ...(opts.headers||{})};
+  try{
+    const r=await fetch(`${API}${endpoint}`,{...opts,headers});
+    const d=await r.json();
+    if(r.status===401||r.status===403){ handle401(); }
+    return{ok:r.ok, status:r.status, data:d};
+  }catch(e){
+    return{ok:false, data:{success:false, message:'Network error: '+e.message}};
+  }
+}
+
+/* ─── Load products (public route, no auth needed) ───────────── */
+async function loadAll(){
+  document.getElementById('tbody').innerHTML='<tr><td colspan="7" style="text-align:center;padding:3rem"><div class="spin" style="margin:0 auto"></div></td></tr>';
+  try{
+    const r=await fetch(`${API}/products?limit=500`);
+    const d=await r.json();
+    if(!r.ok||!d.success){
+      document.getElementById('tbody').innerHTML=`<tr><td colspan="7" class="er2">⚠️ ${d.message||'Could not load products.'}</td></tr>`;
+      return;
+    }
+    all=d.data||[];
+    updStats(); ft();
+  }catch(e){
+    document.getElementById('tbody').innerHTML='<tr><td colspan="7" class="er2">⚠️ Cannot reach server. Make sure it is running on port 5000.</td></tr>';
+  }
+}
+
+function updStats(){
+  document.getElementById('sTot').textContent=all.length;
+  document.getElementById('sIn').textContent =all.filter(p=>p.stock>10).length;
+  document.getElementById('sLow').textContent=all.filter(p=>p.stock>0&&p.stock<=10).length;
+  document.getElementById('sOut').textContent=all.filter(p=>p.stock<=0).length;
+}
+
+/* ─── Filter & render ───────────────────────────────────────── */
+function ft(){
+  const q=document.getElementById('srch').value.trim().toLowerCase();
+  const cat=document.getElementById('catF').value;
+  const badge=document.getElementById('badgeF').value;
+  const stock=document.getElementById('stockF').value;
+  filtered=all.filter(p=>{
+    if(q&&!p.name.toLowerCase().includes(q)&&!(p.category_name||'').toLowerCase().includes(q)) return false;
+    if(cat&&p.category_name!==cat) return false;
+    if(badge!==''&&p.badge!==badge) return false;
+    if(stock==='in'&&p.stock<=10) return false;
+    if(stock==='low'&&!(p.stock>0&&p.stock<=10)) return false;
+    if(stock==='out'&&p.stock!==0) return false;
+    return true;
+  });
+  pg=1; render(); pgRender();
+}
+
+function render(){
+  const tbody=document.getElementById('tbody');
+  if(!filtered.length){ tbody.innerHTML='<tr><td colspan="7" class="er2">No products match your filters.</td></tr>'; return; }
+  const start=(pg-1)*PS;
+  tbody.innerHTML=filtered.slice(start,start+PS).map((p,i)=>{
+    const src=bestImg(p);
+    const imgEl=src
+      ?`<img src="${src}" class="pthumb" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="pthumb-ph" style="display:none;">🖼️</div>`
+      :`<div class="pthumb-ph">🖼️</div>`;
+    const sc=p.stock<=0?'sout':p.stock<=10?'slow':'sok';
+    const st=p.stock<=0?'Out of Stock':p.stock<=10?`Low (${p.stock})`:p.stock;
+    const bp=p.badge?`<span class="bp bp${p.badge}">${p.badge.toUpperCase()}</span>`:`<span class="bp bpnone">—</span>`;
+    const nameEsc=p.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    return`<tr>
+      <td style="color:var(--mu);font-size:11px;font-weight:600">${start+i+1}</td>
+      <td><div class="pt2">${imgEl}<div><div class="pn">${p.name}</div><div class="pid">ID #${p.id}</div></div></div></td>
+      <td><span class="ppr">₹${Number(p.price).toLocaleString()}</span>${p.original_price?`<span class="pwp">₹${Number(p.original_price).toLocaleString()}</span>`:''}</td>
+      <td class="${sc}">${st}</td>
+      <td>${bp}</td>
+      <td style="font-size:12px;color:var(--mu)">${p.category_name||'—'}</td>
+      <td><div class="acts">
+        <button class="be" onclick="openEdit(${p.id})">✏️ Edit</button>
+        <button class="bd2" onclick="openDel(${p.id},'${nameEsc}')">🗑️ Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function pgRender(){
+  const tot=filtered.length, pages=Math.ceil(tot/PS), el=document.getElementById('pgn');
+  if(pages<=1){ el.innerHTML=''; return; }
+  let h=`<span class="pgi">Showing ${Math.min((pg-1)*PS+1,tot)}–${Math.min(pg*PS,tot)} of ${tot}</span>`;
+  h+=`<button class="pgb" onclick="goPg(${pg-1})" ${pg===1?'disabled':''}>← Prev</button>`;
+  for(let i=1;i<=pages;i++) h+=`<button class="pgb${i===pg?' act':''}" onclick="goPg(${i})">${i}</button>`;
+  h+=`<button class="pgb" onclick="goPg(${pg+1})" ${pg===pages?'disabled':''}>Next →</button>`;
+  el.innerHTML=h;
+}
+function goPg(p){ const pages=Math.ceil(filtered.length/PS); if(p<1||p>pages)return; pg=p; render(); pgRender(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+/* ─── Image tab ─────────────────────────────────────────────── */
+function switchTab(tab){
+  imgMode=tab;
+  document.getElementById('panUp').style.display =tab==='upload'?'block':'none';
+  document.getElementById('panUrl').style.display=tab==='url'?'block':'none';
+  document.getElementById('itUp').classList.toggle('act',tab==='upload');
+  document.getElementById('itUrl').classList.toggle('act',tab==='url');
+}
+
+function onFile(file){
+  if(!file||!file.type.startsWith('image/')){ toast('Please select an image file','warn'); return; }
+  if(file.size>5*1024*1024){ toast('File too large. Max 5 MB.','warn'); return; }
+  imgFile=file;
+  document.getElementById('fileInfo').textContent='✓ '+file.name+' selected';
+  document.getElementById('fileInfo').style.display='block';
+  const reader=new FileReader();
+  reader.onload=e=>{ const p=document.getElementById('mPrv'); p.src=e.target.result; p.style.display='block'; };
+  reader.readAsDataURL(file);
+  document.getElementById('mFile').value=''; // reset so same file can be re-chosen
+}
+
+function loadUrl(){
+  const url=document.getElementById('mUrl').value.trim();
+  if(!url){ toast('Enter a URL first','warn'); return; }
+  imgUrlVal=url;
+  const p=document.getElementById('mPrv');
+  p.src=url; p.style.display='block';
+  p.onload=()=>{ toast('Image preview loaded!'); };
+  p.onerror=()=>{ toast('Cannot load image — check the URL','error'); p.style.display='none'; };
+}
+
+/* ─── Open Add ──────────────────────────────────────────────── */
+function openAdd(){
+  if(!requireAdmin()) return;
+  editId=null;
+  resetForm();
+  document.getElementById('modT').textContent='➕ Add New Product';
+  document.getElementById('bSave').textContent='✓ Add Product';
+  document.getElementById('ciRow').style.display='none';
+  document.getElementById('pMod').classList.add('open');
+}
+
+/* ─── Open Edit ─────────────────────────────────────────────── */
+function openEdit(id){
+  if(!requireAdmin()) return;
+  const p=all.find(x=>x.id===id);
+  if(!p){ toast('Product not found in list','error'); return; }
+  editId=id;
+  resetForm();
+  document.getElementById('modT').textContent='✏️ Edit: '+p.name;
+  document.getElementById('bSave').textContent='✓ Save Changes';
+  // Fill fields
+  document.getElementById('mName').value =p.name||'';
+  document.getElementById('mCat').value  =p.category_id||'';
+  document.getElementById('mDesc').value =p.description||'';
+  document.getElementById('mPrice').value=p.price||'';
+  document.getElementById('mMrp').value  =p.original_price||'';
+  document.getElementById('mStock').value=p.stock||'';
+  document.getElementById('mBadge').value=p.badge||'';
+  // Show current image
+  const src=bestImg(p);
+  if(src){
+    document.getElementById('ciImg').src=src;
+    document.getElementById('ciRow').style.display='flex';
+  }
+  document.getElementById('pMod').classList.add('open');
+}
+
+function resetForm(){
+  ['mName','mDesc','mPrice','mMrp','mStock','mUrl'].forEach(id=>{ const e=document.getElementById(id); if(e)e.value=''; });
+  document.getElementById('mCat').value=''; document.getElementById('mBadge').value='';
+  imgFile=null; imgUrlVal='';
+  const p=document.getElementById('mPrv'); p.src=''; p.style.display='none';
+  document.getElementById('fileInfo').style.display='none';
+  document.getElementById('mFile').value='';
+  document.querySelectorAll('.fe').forEach(e=>e.textContent='');
+  document.querySelectorAll('#pMod .fi').forEach(e=>e.classList.remove('err'));
+  const al=document.getElementById('mAl'); al.className='mal'; al.textContent=''; al.style.display='none';
+  switchTab('upload');
+}
+
+function closeMod(){ document.getElementById('pMod').classList.remove('open'); editId=null; }
+
+/* ─── Save (Add or Edit) ─────────────────────────────────────── */
+async function save(){
+  if(!requireAdmin()) return;
+
+  // Validate
+  let valid=true;
+  const cE=id=>{ document.getElementById('fe-'+id).textContent=''; document.getElementById(id).classList.remove('err'); };
+  const sE=(id,m)=>{ document.getElementById('fe-'+id).textContent=m; document.getElementById(id).classList.add('err'); valid=false; };
+
+  cE('mName'); cE('mCat'); cE('mPrice'); cE('mStock');
+  const name=document.getElementById('mName').value.trim();
+  if(!name||name.length<2) sE('mName','Product name is required (min 2 characters).');
+  if(!document.getElementById('mCat').value) sE('mCat','Please select a category.');
+  const price=parseFloat(document.getElementById('mPrice').value);
+  if(!price||price<=0) sE('mPrice','Enter a valid selling price.');
+  const stock=parseInt(document.getElementById('mStock').value);
+  if(isNaN(stock)||stock<0) sE('mStock','Stock must be 0 or more.');
+  if(!valid){ toast('Please fix the highlighted errors','error'); return; }
+
+  const btn=document.getElementById('bSave');
+  btn.textContent='⏳ Saving...'; btn.disabled=true;
+
+  // Build FormData — DO NOT set Content-Type (browser sets it with boundary for multipart)
+  const fd=new FormData();
+  fd.append('name', name);
+  fd.append('description', document.getElementById('mDesc').value.trim());
+  fd.append('price', price);
+  fd.append('original_price', document.getElementById('mMrp').value||'');
+  fd.append('stock', stock);
+  fd.append('category_id', document.getElementById('mCat').value);
+  fd.append('badge', document.getElementById('mBadge').value||'');
+
+  if(imgMode==='upload' && imgFile){
+    fd.append('image', imgFile, imgFile.name);
+  } else if(imgMode==='url'){
+    const u=document.getElementById('mUrl').value.trim();
+    if(u) fd.append('image_url', u);
+  }
+
+  const endpoint=editId ? `/products/${editId}` : '/products';
+  const method  =editId ? 'PUT' : 'POST';
+
+  // IMPORTANT: Only Authorization header, NO Content-Type for FormData
+  // Use adminFetch opts style but with FormData body
+  const token=tok();
+  if(!token){ showLogin('Please login first.'); btn.textContent=editId?'✓ Save Changes':'✓ Add Product'; btn.disabled=false; return; }
+
+  let result;
+  try{
+    const r=await fetch(`${API}${endpoint}`,{
+      method,
+      headers:{ Authorization:`Bearer ${token}` },  // NO Content-Type!
+      body:fd
+    });
+    const d=await r.json();
+    if(r.status===401||r.status===403){ handle401(); btn.textContent=editId?'✓ Save Changes':'✓ Add Product'; btn.disabled=false; return; }
+    result={ok:r.ok, data:d};
+  }catch(e){
+    result={ok:false, data:{success:false, message:'Network error: '+e.message}};
+  }
+
+  btn.textContent=editId?'✓ Save Changes':'✓ Add Product'; btn.disabled=false;
+
+  if(result.ok && result.data.success){
+    closeMod();
+    toast(editId?'Product updated successfully! ✅':'Product added successfully! 🎉');
+    await loadAll(); // Reload the table
+  }else{
+    const al=document.getElementById('mAl');
+    al.className='mal err'; al.style.display='flex';
+    al.textContent='⚠️ '+(result.data.message||'Unknown error. Please try again.');
+    toast(result.data.message||'Failed to save product','error');
+  }
+}
+
+/* ─── Delete ─────────────────────────────────────────────────── */
+function openDel(id, name){
+  if(!requireAdmin()) return;
+  delId=id;
+  document.getElementById('dSub').textContent=`Delete "${name}"? This will permanently remove the product and its image file. This cannot be undone.`;
+  document.getElementById('dMod').classList.add('open');
+}
+function closeDel(){ document.getElementById('dMod').classList.remove('open'); delId=null; }
+
+async function doDel(){
+  if(!delId) return;
+  const btn=document.getElementById('bDel');
+  btn.textContent='Deleting...'; btn.disabled=true;
+  const{ok,data}=await adminFetch(`/products/${delId}`,{method:'DELETE'});
+  btn.textContent='🗑️ Delete'; btn.disabled=false;
+  closeDel();
+  if(ok&&data.success){
+    toast('Product deleted. ✅');
+    await loadAll();
+  }else{
+    toast(data.message||'Delete failed','error');
+  }
+}
+
+/* ─── Init ───────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', async ()=>{
+  // Fix: clear any email autocomplete from browser that fills the search box
+  setTimeout(()=>{ document.getElementById('srch').value=''; ft(); }, 100);
+
+  // Enter key in login form
+  document.getElementById('lPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+  document.getElementById('lEmail').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+  // Load products first (public, no auth needed)
+  await loadAll();
+
+  // Now verify the stored token against the backend
+  // If token is stale (old secret), the backend will return 401 and we show login
+  const token = tok();
+  const user  = usr();
+  if(token && user && user.role === 'admin'){
+    try{
+      const r = await fetch(`${API}/auth/profile`, { headers:{ Authorization:`Bearer ${token}` } });
+      if(r.ok){
+        const d = await r.json();
+        if(d.success && d.user.role === 'admin'){
+          document.getElementById('aName').textContent = '🔑 ' + d.user.name;
+          // Token is valid — all good
+        } else {
+          clrTok(); showLogin('Please login as admin.');
+        }
+      } else {
+        // 401 — token invalid/expired, clear and show login
+        clrTok(); showLogin('Your session expired. Please login again.');
+      }
+    } catch {
+      // Server unreachable — don't show login overlay, will handle per-action
+    }
+  } else if(!token || !user){
+    showLogin();
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orders — Fasty Shop Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --green:#3a7d2c;--green-light:#5aab47;--green-bg:#d6eacc;--green-pale:#eef6e8;
+      --orange:#e07b1a;--orange-light:#f59e2a;--brown:#2e1a0e;
+      --text:#1a1a1a;--muted:#6b6b6b;--border:#d4e8c8;--surface:#fff;--bg:#f0f7eb;
+      --danger:#e63946;--success:#22c55e;--warn:#f59e2a;
+      --font-head:'Nunito',sans-serif;--font-body:'Poppins',sans-serif;
+      --shadow:0 4px 20px rgba(58,125,44,0.10);--radius:12px;
+    }
+    body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6;min-height:100vh;}
+
+    /* TOPBAR */
+    .topbar{background:var(--surface);border-bottom:2px solid var(--green-bg);padding:0 2rem;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(58,125,44,0.08);}
+    .logo{display:flex;align-items:center;gap:10px;}
+    .logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--orange),var(--orange-light));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+    .logo-name{display:block;font-family:var(--font-head);font-size:1.1rem;font-weight:900;color:var(--brown);}
+    .logo-sub{display:block;font-size:10px;font-weight:700;color:var(--orange);letter-spacing:2px;text-transform:uppercase;}
+    .admin-badge{background:var(--green-pale);color:var(--green);font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;border:1.5px solid var(--green-bg);}
+    .back-btn-top{background:none;border:1.5px solid var(--border);color:var(--muted);font-size:13px;font-family:var(--font-body);padding:6px 14px;border-radius:8px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+    .back-btn-top:hover{border-color:var(--green);color:var(--green);}
+
+    /* LAYOUT */
+    .layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 62px);}
+    .sidebar{background:var(--surface);border-right:1.5px solid var(--border);padding:1.5rem 1rem;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--muted);text-decoration:none;transition:all 0.2s;cursor:pointer;margin-bottom:3px;}
+    .nav-item:hover{background:var(--green-pale);color:var(--green);}
+    .nav-item.active{background:var(--green);color:white;font-weight:700;}
+
+    /* MAIN */
+    .main{padding:2rem;}
+    .page-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+    .page-title{font-family:var(--font-head);font-size:1.7rem;font-weight:900;color:var(--brown);}
+    .page-sub{color:var(--muted);font-size:13px;margin-top:2px;}
+
+    /* STATS STRIP */
+    .stats-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem;}
+    .stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;box-shadow:var(--shadow);}
+    .stat-label{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+    .stat-value{font-family:var(--font-head);font-size:1.5rem;font-weight:900;color:var(--brown);}
+    .stat-card.green .stat-value{color:var(--green);}
+    .stat-card.orange .stat-value{color:var(--orange);}
+    .stat-card.red .stat-value{color:var(--danger);}
+
+    /* FILTERS */
+    .filters-bar{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center;}
+    .filter-chip{background:var(--green-pale);border:1.5px solid var(--border);color:var(--muted);font-size:13px;font-weight:600;padding:6px 16px;border-radius:100px;cursor:pointer;transition:all 0.2s;}
+    .filter-chip:hover,.filter-chip.active{background:var(--green);color:white;border-color:var(--green);}
+    .search-box{display:flex;align-items:center;background:var(--surface);border:1.5px solid var(--border);border-radius:100px;overflow:hidden;margin-left:auto;}
+    .search-box input{background:none;border:none;outline:none;font-family:var(--font-body);font-size:13.5px;color:var(--text);padding:7px 16px;width:220px;}
+    .search-box input::placeholder{color:var(--muted);}
+
+    /* ORDERS LIST */
+    .orders-list{display:flex;flex-direction:column;gap:1rem;}
+    .order-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);transition:border-color 0.2s;}
+    .order-card:hover{border-color:var(--green-light);}
+
+    /* Order card header */
+    .oc-header{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+    .oc-id{font-family:var(--font-head);font-weight:800;font-size:1rem;color:var(--brown);}
+    .oc-date{font-size:12px;color:var(--muted);}
+    .oc-status{font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:100px;margin-left:auto;}
+    .status-pending{background:#fff3cd;color:#856404;}
+    .status-confirmed{background:#cce5ff;color:#004085;}
+    .status-shipped{background:#d1ecf1;color:#0c5460;}
+    .status-delivered{background:#d4edda;color:#155724;}
+    .status-cancelled{background:#f8d7da;color:#721c24;}
+    .oc-amount{font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--green);}
+
+    /* Customer info */
+    .oc-customer{display:flex;align-items:center;gap:12px;padding:0.9rem 1.25rem;background:var(--green-pale);border-bottom:1px solid var(--border);}
+    .cust-avatar{width:36px;height:36px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:800;font-size:13px;color:var(--green);flex-shrink:0;}
+    .cust-name{font-family:var(--font-head);font-weight:700;font-size:0.9rem;color:var(--brown);}
+    .cust-meta{font-size:12px;color:var(--muted);}
+    .cust-addr{font-size:12px;color:var(--muted);margin-left:auto;text-align:right;max-width:260px;}
+
+    /* Product items */
+    .oc-items{padding:0.9rem 1.25rem;}
+    .oc-items-title{font-family:var(--font-head);font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:0.6rem;}
+    .prod-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--green-bg);}
+    .prod-row:last-child{border-bottom:none;}
+    .prod-img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--green-pale);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;overflow:hidden;}
+    .prod-img img{width:100%;height:100%;object-fit:cover;display:block;}
+    .prod-name{font-family:var(--font-head);font-weight:700;font-size:0.88rem;color:var(--brown);}
+    .prod-cat{font-size:11px;color:var(--muted);}
+    .prod-qty{font-size:12.5px;color:var(--muted);}
+    .prod-price{font-family:var(--font-head);font-weight:800;color:var(--green);font-size:0.9rem;margin-left:auto;white-space:nowrap;}
+
+    /* Footer */
+    .oc-footer{display:flex;align-items:center;justify-content:space-between;padding:0.8rem 1.25rem;background:var(--bg);flex-wrap:wrap;gap:0.75rem;}
+    .oc-meta{display:flex;gap:1.25rem;flex-wrap:wrap;}
+    .oc-meta-item{font-size:12px;color:var(--muted);}
+    .oc-meta-item strong{color:var(--text);}
+    .status-select{background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-family:var(--font-body);font-size:13px;padding:6px 12px;border-radius:8px;cursor:pointer;outline:none;transition:border-color 0.2s;}
+    .status-select:focus{border-color:var(--green);}
+    .btn-update{background:var(--green);color:white;font-family:var(--font-head);font-weight:700;font-size:13px;border:none;padding:7px 18px;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+    .btn-update:hover{background:var(--green-light);}
+
+    /* Loader / Empty */
+    .loader-wrap{display:flex;justify-content:center;padding:4rem;}
+    .spinner{width:40px;height:40px;border:4px solid var(--green-bg);border-top-color:var(--green);border-radius:50%;animation:spin 0.8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .empty-state{text-align:center;padding:4rem 2rem;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);}
+    .empty-state .ei{font-size:3rem;margin-bottom:1rem;}
+    .empty-state h3{font-family:var(--font-head);font-size:1.2rem;color:var(--brown);margin-bottom:0.5rem;}
+    .empty-state p{color:var(--muted);font-size:13.5px;}
+
+    /* Toast */
+    .toast{position:fixed;bottom:2rem;right:2rem;background:var(--green);color:white;font-size:14px;font-weight:500;padding:12px 22px;border-radius:12px;z-index:500;display:flex;align-items:center;gap:8px;transform:translateY(80px);opacity:0;transition:all 0.3s;box-shadow:0 4px 20px rgba(58,125,44,0.3);}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.error{background:var(--danger);}
+    .toast.warn{background:var(--warn);}
+
+    /* Pagination */
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:1.5rem;flex-wrap:wrap;}
+    .page-btn{background:var(--surface);border:1.5px solid var(--border);color:var(--muted);font-size:13px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+    .page-btn:hover,.page-btn.active{background:var(--green);color:white;border-color:var(--green);}
+    .page-btn:disabled{opacity:0.4;cursor:not-allowed;}
+
+    @media(max-width:768px){.layout{grid-template-columns:1fr;}.sidebar{display:none;}.oc-header{flex-wrap:wrap;}.cust-addr{display:none;}}
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="logo">
+      <div class="logo-icon">🛒</div>
+      <div>
+        <span class="logo-name">FASTY SHOP</span>
+        <span class="logo-sub">Admin Panel</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <span class="admin-badge" id="adminName">🔑 Admin</span>
+    <a href="index.html" class="back-btn-top">← Back to Website</a>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="index.html"       class="nav-item">📊 Dashboard</a>
+    <a href="add-product.html" class="nav-item">➕ Add Product</a>
+    <a href="index.html"       class="nav-item">📦 All Products</a>
+    <a href="#"                class="nav-item active">📋 Orders</a>
+    <a href="index.html"       class="nav-item">👤 Users</a>
+    <a href="index.html"       class="nav-item">🎟️ Coupons</a>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">📋 All Orders</h1>
+        <p class="page-sub">View, manage and update order statuses</p>
+      </div>
+      <button onclick="loadAllOrders()" style="background:var(--green-pale);border:1.5px solid var(--green-bg);color:var(--green);font-size:13px;font-weight:600;padding:8px 18px;border-radius:8px;cursor:pointer;">↺ Refresh</button>
+    </div>
+
+    <!-- Stats Strip -->
+    <div class="stats-strip" id="statsStrip">
+      <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-value" id="statTotal">—</div></div>
+      <div class="stat-card orange"><div class="stat-label">Pending</div><div class="stat-value" id="statPending">—</div></div>
+      <div class="stat-card"><div class="stat-label">Confirmed</div><div class="stat-value" id="statConfirmed">—</div></div>
+      <div class="stat-card"><div class="stat-label">Shipped</div><div class="stat-value" id="statShipped">—</div></div>
+      <div class="stat-card green"><div class="stat-label">Delivered</div><div class="stat-value" id="statDelivered">—</div></div>
+      <div class="stat-card red"><div class="stat-label">Cancelled</div><div class="stat-value" id="statCancelled">—</div></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <button class="filter-chip active" onclick="filterByStatus('')"       id="chip-all">All</button>
+      <button class="filter-chip"        onclick="filterByStatus('pending')"    id="chip-pending">⏳ Pending</button>
+      <button class="filter-chip"        onclick="filterByStatus('confirmed')"  id="chip-confirmed">✅ Confirmed</button>
+      <button class="filter-chip"        onclick="filterByStatus('shipped')"    id="chip-shipped">🚚 Shipped</button>
+      <button class="filter-chip"        onclick="filterByStatus('delivered')"  id="chip-delivered">📦 Delivered</button>
+      <button class="filter-chip"        onclick="filterByStatus('cancelled')"  id="chip-cancelled">❌ Cancelled</button>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search by name, order ID..." oninput="filterOrders()"/>
+      </div>
+    </div>
+
+    <!-- Orders List -->
+    <div id="ordersContainer">
+      <div class="loader-wrap"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast"><span id="toastIcon">✓</span><span id="toastMsg"></span></div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+const token    = localStorage.getItem('fasty_token');
+
+let allOrders    = [];
+let filteredOrds = [];
+let currentStatus = '';
+let currentPage   = 1;
+const PAGE_SIZE   = 10;
+
+// ── AUTH CHECK ─────────────────────────────────────────────
+if (!token) {
+  alert('Please login as admin first.');
+  window.location.href = 'index.html';
+}
+
+// ── TOAST ──────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.className = `toast show${type!=='success'?' '+type:''}`;
+  document.getElementById('toastIcon').textContent = type==='success'?'✓':type==='error'?'✕':'⚠';
+  document.getElementById('toastMsg').textContent  = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ── API ────────────────────────────────────────────────────
+async function api(endpoint, options={}) {
+  const headers = { 'Content-Type':'application/json', 'Authorization':`Bearer ${token}` };
+  try {
+    const res  = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+    const data = await res.json();
+    return { ok: res.ok, data };
+  } catch {
+    return { ok: false, data: { success: false, message: 'Backend offline.' } };
+  }
+}
+
+// ── LOAD ALL ORDERS ────────────────────────────────────────
+async function loadAllOrders() {
+  document.getElementById('ordersContainer').innerHTML = '<div class="loader-wrap"><div class="spinner"></div></div>';
+
+  const { ok, data } = await api('/admin/orders?limit=200');
+  if (!ok || !data.success) {
+    document.getElementById('ordersContainer').innerHTML =
+      `<div class="empty-state"><div class="ei">⚠️</div><h3>Failed to load orders</h3><p>${data.message||'Check your admin token and server.'}</p></div>`;
+    return;
+  }
+
+  allOrders = data.data || [];
+  updateStats();
+  applyFilter();
+
+  // Set admin name
+  const user = JSON.parse(localStorage.getItem('fasty_user')||'null');
+  if (user) document.getElementById('adminName').textContent = `🔑 ${user.name}`;
+}
+
+// ── STATS ──────────────────────────────────────────────────
+function updateStats() {
+  const count = s => allOrders.filter(o=>o.status===s).length;
+  document.getElementById('statTotal').textContent     = allOrders.length;
+  document.getElementById('statPending').textContent   = count('pending');
+  document.getElementById('statConfirmed').textContent = count('confirmed');
+  document.getElementById('statShipped').textContent   = count('shipped');
+  document.getElementById('statDelivered').textContent = count('delivered');
+  document.getElementById('statCancelled').textContent = count('cancelled');
+}
+
+// ── FILTER ─────────────────────────────────────────────────
+function filterByStatus(status) {
+  currentStatus = status;
+  currentPage   = 1;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  const chipId = status ? `chip-${status}` : 'chip-all';
+  document.getElementById(chipId)?.classList.add('active');
+  applyFilter();
+}
+
+function filterOrders() { currentPage=1; applyFilter(); }
+
+function applyFilter() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  filteredOrds = allOrders.filter(o => {
+    const matchStatus = !currentStatus || o.status === currentStatus;
+    const matchSearch = !q ||
+      o.customer_name?.toLowerCase().includes(q) ||
+      o.customer_email?.toLowerCase().includes(q) ||
+      String(o.id).includes(q) ||
+      o.items?.some(i => i.product_name?.toLowerCase().includes(q));
+    return matchStatus && matchSearch;
+  });
+  renderOrders();
+  renderPagination();
+}
+
+// ── RENDER ORDERS ──────────────────────────────────────────
+function renderOrders() {
+  const container = document.getElementById('ordersContainer');
+  if (!filteredOrds.length) {
+    container.innerHTML = `<div class="empty-state"><div class="ei">📋</div><h3>No orders found</h3><p>Try a different filter or search term.</p></div>`;
+    return;
+  }
+
+  const start  = (currentPage - 1) * PAGE_SIZE;
+  const paged  = filteredOrds.slice(start, start + PAGE_SIZE);
+
+  container.innerHTML = `<div class="orders-list">${paged.map(renderOrderCard).join('')}</div>`;
+}
+
+function renderOrderCard(o) {
+  const initials = (o.customer_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const date     = new Date(o.created_at).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  const itemsHTML = (o.items||[]).map(it => {
+    const imgEl = it.image_url
+      ? `<div class="prod-img"><img src="${it.image_url}" alt="${it.product_name}" onerror="this.parentElement.innerHTML='🖼️'"/></div>`
+      : `<div class="prod-img">🖼️</div>`;
+    return `
+      <div class="prod-row">
+        ${imgEl}
+        <div style="flex:1;min-width:0;">
+          <div class="prod-name">${it.product_name}</div>
+          <div class="prod-cat">${it.category_name||''}</div>
+          <div class="prod-qty">Qty: ${it.quantity} × ₹${Number(it.unit_price).toLocaleString()}</div>
+        </div>
+        <div class="prod-price">₹${Number(it.total_price).toLocaleString()}</div>
+      </div>`;
+  }).join('') || '<p style="font-size:13px;color:var(--muted);">No items found</p>';
+
+  return `
+    <div class="order-card">
+      <div class="oc-header">
+        <div>
+          <div class="oc-id">Order #${o.id}</div>
+          <div class="oc-date">${date}</div>
+        </div>
+        <span class="oc-status status-${o.status}">${o.status.charAt(0).toUpperCase()+o.status.slice(1)}</span>
+        <div style="margin-left:auto;text-align:right;">
+          <div class="oc-amount">₹${Number(o.final_amount).toLocaleString()}</div>
+          <div style="font-size:11px;color:var(--muted);">${o.item_count} item(s)</div>
+        </div>
+      </div>
+
+      <div class="oc-customer">
+        <div class="cust-avatar">${initials}</div>
+        <div>
+          <div class="cust-name">${o.customer_name}</div>
+          <div class="cust-meta">${o.customer_email} ${o.customer_phone?'· '+o.customer_phone:''}</div>
+        </div>
+        <div class="cust-addr">
+          📍 ${o.shipping_address || ''}, ${o.shipping_city || ''} — ${o.shipping_pincode || ''}
+        </div>
+      </div>
+
+      <div class="oc-items">
+        <div class="oc-items-title">Products Ordered</div>
+        ${itemsHTML}
+      </div>
+
+      <div class="oc-footer">
+        <div class="oc-meta">
+          <span class="oc-meta-item">💳 <strong>${o.payment_method}</strong></span>
+          <span class="oc-meta-item">🏷️ Status: <strong>${o.payment_status||'—'}</strong></span>
+          <span class="oc-meta-item">🧾 GST: <strong>₹${Number(o.gst_amount||0).toLocaleString()}</strong></span>
+          ${o.discount_amount>0?`<span class="oc-meta-item">🎟️ Discount: <strong>₹${Number(o.discount_amount).toLocaleString()}</strong></span>`:''}
+          ${o.coupon_code?`<span class="oc-meta-item">🏷️ Coupon: <strong>${o.coupon_code}</strong></span>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <select class="status-select" id="sel-${o.id}">
+            <option value="pending"   ${o.status==='pending'  ?'selected':''}>⏳ Pending</option>
+            <option value="confirmed" ${o.status==='confirmed'?'selected':''}>✅ Confirmed</option>
+            <option value="shipped"   ${o.status==='shipped'  ?'selected':''}>🚚 Shipped</option>
+            <option value="delivered" ${o.status==='delivered'?'selected':''}>📦 Delivered</option>
+            <option value="cancelled" ${o.status==='cancelled'?'selected':''}>❌ Cancelled</option>
+          </select>
+          <button class="btn-update" onclick="updateStatus(${o.id})">Update</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── UPDATE STATUS ──────────────────────────────────────────
+async function updateStatus(orderId) {
+  const status = document.getElementById(`sel-${orderId}`).value;
+  const { ok, data } = await api(`/admin/orders/${orderId}/status`, {
+    method: 'PUT',
+    body:   JSON.stringify({ status }),
+  });
+  if (ok && data.success) {
+    // Update local state
+    const o = allOrders.find(x=>x.id===orderId);
+    if (o) o.status = status;
+    updateStats();
+    applyFilter();
+    showToast(`Order #${orderId} updated to "${status}"`);
+  } else {
+    showToast(data.message||'Update failed','error');
+  }
+}
+
+// ── PAGINATION ─────────────────────────────────────────────
+function renderPagination() {
+  const total = filteredOrds.length;
+  const pages = Math.ceil(total / PAGE_SIZE);
+  const pg    = document.getElementById('pagination');
+  if (pages <= 1) { pg.innerHTML=''; return; }
+
+  let html = `<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage===1?'disabled':''}>← Prev</button>`;
+  for (let i=1;i<=pages;i++) {
+    html += `<button class="page-btn${i===currentPage?' active':''}" onclick="changePage(${i})">${i}</button>`;
+  }
+  html += `<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage===pages?'disabled':''}>Next →</button>`;
+  pg.innerHTML = html;
+}
+function changePage(p) {
+  const pages = Math.ceil(filteredOrds.length / PAGE_SIZE);
+  if (p<1||p>pages) return;
+  currentPage = p;
+  renderOrders();
+  renderPagination();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── INIT ───────────────────────────────────────────────────
+loadAllOrders();
+</script>
+</body>
+</html>
