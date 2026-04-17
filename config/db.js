@@ -1,23 +1,25 @@
-const mysql = require('mysql2/promise');
-require('dotenv').config();
+const mysql = require("mysql2");
+require("dotenv").config();
 
-const db = mysql.createConnection({
-  host:process.env.DB_HOST,
-  user:process.env.DB_USER,
-  password:process.env.DN_PASSWORD,
-  database:process.env.DB_NAME,
-  port:process.env.DN_PORT
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-(async () => {
-  try {
-    const conn = await pool.getConnection();
-    console.log('✅  MySQL connected to "' + (process.env.DB_NAME || 'fasty_shop') + '"');
+// Test connection
+pool.getConnection((err, conn) => {
+  if (err) {
+    console.error("❌ MySQL failed:", err.message);
+  } else {
+    console.log("✅ MySQL connected");
     conn.release();
-  } catch (err) {
-    console.error('❌  MySQL failed:', err.message);
-    console.error('    Check DB_PASSWORD in .env file');
   }
-})();
+});
 
 module.exports = pool;
