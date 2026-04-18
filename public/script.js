@@ -3,7 +3,7 @@
    ============================================================ */
 'use strict';
 
-const API = 'http://localhost:5000/api';
+const API = 'https://fastyshop-1.onrender.com/api';
 
 // ── SAME IMAGE URLS used in database seed ─────────────────────
 // These match exactly what's in schema.sql so fallback = DB
